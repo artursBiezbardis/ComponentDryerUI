@@ -1,0 +1,51 @@
+<MainLayout>:
+    GridLayout:
+        cols: 1
+        size: root.size
+
+        GridLayout:
+            rows: 2  # Define rows for the main grid
+            size_hint_y: None
+            height: '400dp'  # Adjust the height as needed
+
+            # First row with two columns
+            GridLayout:
+                cols: 2
+                size_hint_y: None
+                height: '200dp'
+
+                # First column in the first row
+                GridLayout:
+                    cols: 1
+                    row_force_default: True
+                    row_default_height: 50
+                    col_force_default: True
+                    col_default_width: 50
+                    Label:
+                        text: 'Status'
+                        color: 1, 0, 0, 1  # Red color
+                    Button:
+                        text: 'Button 1'
+
+                # Second column in the first row with scrollable content
+                ScrollView:
+                    size_hint: (5, None)
+                    size: (self.width, 500)  # Match the height of the grid row
+                    do_scroll_x: False
+                    do_scroll_y: True
+
+                    GridLayout:
+
+                        id: scroll_box
+                        cols: 3
+                        size_hint_y: None
+                        height: self.minimum_height  # This will expand with content
+
+            # Second row with a full-width label
+            TextInput:
+                id: scanner_input
+                on_text_validate: root.on_enter(self)
+                multiline: False
+                hint_text:'Scan barcode here'
+                size_hint_y: None
+                height: '50dp'

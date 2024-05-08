@@ -1,4 +1,4 @@
-import view.mainView as View
+from view.app import DryerApp
 
-
-View.MainView().main()
+if __name__ == '__main__':
+    DryerApp().run()
