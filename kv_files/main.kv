@@ -2,50 +2,83 @@
     GridLayout:
         cols: 1
         size: root.size
-
         GridLayout:
-            rows: 2  # Define rows for the main grid
-            size_hint_y: None
-            height: '200dp'  # Adjust the height as needed
+            rows: 2
+            size_hint_y: 0.9 # 80% of the parent's height is assigned here
 
             # First row with two columns
             GridLayout:
                 cols: 2
-                size_hint_y: None
-                height: '200dp'
+                size_hint_y: 0.9  # 90% of the parent grid row's height
+                size_hint_x: 0.9
 
                 # First column in the first row
                 GridLayout:
                     cols: 1
+                    #size_hint_y: None
+                    size_hint_x: None
+                    height: self.minimum_height  # Dynamic height based on its children
                     row_force_default: True
                     row_default_height: 50
                     col_force_default: True
-                    col_default_width: 50
+                    col_default_width: 100
                     Label:
                         text: 'Status'
                         color: 1, 0, 0, 1  # Red color
                     Button:
-                        text: 'Button 1'
+                        text: 'List'
+                    Button:
+                        text: 'Settings'
 
                 # Second column in the first row with scrollable content
-                ScrollView:
-                    size_hint: (5, None)
-                    size: (self.width, 500)  # Match the height of the grid row
-                    do_scroll_x: False
-                    do_scroll_y: True
+                BoxLayout:
+                    orientation: 'vertical'
+                    size_hint_x: 1.9
+                    height: '10dp'
+                    canvas.before:
+                        Color:
+                            rgba: 0.15, 0.15, 0.15, 1
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
 
                     GridLayout:
-
-                        id: scroll_box
-                        cols: 3
+                        size_hint_x: 1
                         size_hint_y: None
-                        height: self.minimum_height  # This will expand with content
+                        height: 50
+                        cols: 3
+
+                        Label:
+                            size_hint_x: 0.4
+                            text: 'Packaging Id'
+
+                        Label:
+                            size_hint_x: 0.4
+                            text: 'Part Number'
+
+
+                        Label:
+                            size_hint_x: 0.2
+                            text: ''
+
+                    ScrollView:
+                        size_hint_y: 1  # Take the full height available from BoxLayout
+                        do_scroll_x: False
+                        do_scroll_y: True
+
+                        GridLayout:
+                            id: scroll_box
+                            cols: 1
+                            size_hint_y: None
+                            height: self.minimum_height  # Adjust based on content dynamically
 
             # Second row with a full-width label
             TextInput:
                 id: scanner_input
                 on_text_validate: root.on_enter(self)
                 multiline: False
-                hint_text:'Scan barcode here'
+                hint_text: 'Scan barcode here'
                 size_hint_y: None
-                height: '50dp'
+                height: '35dp'  # Fixed height
+                width: root.width
+                pos_hint: {'y': 0}
