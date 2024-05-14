@@ -35,6 +35,9 @@ class TaskData(Base):
     total_time = Column(String)
     carrier_position = Column(String)
 
+# Create table for storing part msl history to remember last msl set
+
+
 
 # Set up the engine to connect to the SQLite database
 engine = create_engine('sqlite:///../database.db', echo=True)
