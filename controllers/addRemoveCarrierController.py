@@ -1,0 +1,35 @@
+from database import SessionLocal
+from repositories.carrierDataRepository import CarrierDataRepository
+
+
+class AddCarrierController:
+
+    def __init__(self, add_carrier: dict, drying_carrier_collection: dict, barcode: str):
+        self.add_carrier = add_carrier
+        self.barcode = barcode
+        self.drying_carrier_collection = drying_carrier_collection
+
+    def main(self) -> dict:
+        db_session = SessionLocal()
+        carrier_repo = CarrierDataRepository(db_session)
+        no_barcodes = ''
+        if self.barcode not in self.drying_carrier_collection:
+            if (self.barcode[0]).lower() == 'l' and len(self.barcode) == 4:
+                self.add_carrier['carrier_position'] = self.barcode
+                self.add_carrier['status_message'] = f'Dryer position {self.barcode} is set.'
+            elif (self.barcode[0]).lower() == 'r' and len(self.barcode) == 7:
+                self.add_carrier['carrier_barcode'] = self.barcode
+                if not carrier_repo.check_carrier_exist(self.barcode):
+                    no_barcodes = f'This barcode is not registered!!!!!'
+                self.add_carrier['status_message'] = f'Carrier {self.barcode} is set.{no_barcodes}'
+            else:
+                self.add_carrier['status_message'] = f'Not valid barcode'
+        else:
+            self.add_carrier['status_message'] = 'Carrier ' + self.add_carrier['carrier_barcode'] + ' is in Dryer!!'
+        self.set_status()
+
+        return self.add_carrier
+
+    def set_status(self):
+        if self.add_carrier['carrier_barcode'] and self.add_carrier['carrier_barcode']:
+            self.add_carrier['status'] = True
