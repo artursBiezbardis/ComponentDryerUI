@@ -1,0 +1,45 @@
+<AddToDryerForm>
+    title: 'Select MSL data for carrier'
+    size: root.size
+    GridLayout:
+        cols: 1
+        BoxLayout:
+            orientation: 'horizontal'
+            Label:
+                text: 'Carrier id: ' + root.item_data_template.get('carrier_barcode', 'N/A')
+            Label:
+                text: 'Part name: ' + root.item_data_template.get('part_name', 'N/A')
+            Label:
+                text: 'Location: ' + root.item_data_template.get('carrier_position', 'N/A')
+            Spinner:
+                id: thickness_level
+                text: 'Select part thickness'
+                values: [ '< 0.5mm', '0.8 => 0.5mm', '1.4 => 0.8mm', '2 => 1.4mm', '4.5 => 2mm', 'custom']
+                on_text: root.ids.moisture_level.disabled = False
+
+            Spinner:
+                id: moisture_level
+                text: 'Select MSL'
+                values: [ 'msl 2', 'msl 2a', 'msl 3', 'msl 4', 'msl 5', 'msl 5a', 'custom']
+                disabled: True
+                on_text: root.ids.hours_greater_or_less_than_72.disabled = False
+
+            Spinner:
+                id: hours_greater_or_less_than_72
+                text: 'Select part thickness'
+                values: [ 'hours greater than 72', 'hours less than 72']
+                disabled: True
+                on_text: root.set_time_to_dry()
+
+            TextInput:
+                id: drying_interval
+                multiline: False
+                value: ''
+                disabled: True
+
+
+            Button:
+                text: 'Submit'
+                disabled: True
+        BoxLayout:
+            orientation: 'horizontal'

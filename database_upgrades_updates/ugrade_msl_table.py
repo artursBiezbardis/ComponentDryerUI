@@ -17,6 +17,6 @@ def import_csv_to_db(csv_file_path):
                 )
                 session.add(new_data)
         session.commit()
-
+    session.close()
 
 import_csv_to_db('../data/msl.csv')

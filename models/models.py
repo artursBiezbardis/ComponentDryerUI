@@ -1,8 +1,7 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm import declarative_base
-
-Base = declarative_base()
+from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, Boolean, Interval
+from database import Base
+# from sqlalchemy.orm import sessionmaker
+#
 
 
 class MslData(Base):
@@ -24,30 +23,23 @@ class CarrierData(Base):
 class TaskData(Base):
     __tablename__ = 'task_data'
     id = Column(Integer, primary_key=True, unique=True)
-    carrier_id = Column(Integer, unique=True)
+    carrier_id = Column(Integer)
     part_name = Column(String)
     thickness = Column(String)
     msl = Column(String)
     time_after_before_72_hours = Column(String)
-    start_time = Column(String)
-    end_time = Column(String)
-    set_time = Column(String)
-    total_time = Column(String)
+    drying_start_interval = Column(Interval)
+    add_interval = Column(Interval)
+    total_time = Column(Interval)
+    start_time = Column(DateTime)
+    end_time = Column(DateTime)
     carrier_position = Column(String)
+    in_dryer = Column(Boolean)
+    drying_finished = Column(Boolean)
 
-# Create table for storing part msl history to remember last msl set
 
-
-
-# Set up the engine to connect to the SQLite database
-engine = create_engine('sqlite:///../database.db', echo=True)
-
-# Create all tables in the engine. This is equivalent to "Create Table"
-# statements in raw SQL.
-Base.metadata.create_all(engine)
-
-# Create a configured "Session" class
-Session = sessionmaker(bind=engine)
-
-# Create a session
-session = Session()
+# engine = create_engine('sqlite:///../database.db')
+# Base.metadata.create_all(engine)
+#
+# # Create a session
+# Session = sessionmaker(bind=engine)
