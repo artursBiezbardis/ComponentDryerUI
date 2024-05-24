@@ -31,3 +31,6 @@ class TaskDataRepository:
             print(f"Row with id {id} updated successfully.")
         else:
             print(f"No row found with id {id}.")
+
+    def get_all_drying_items(self):
+        return self.session.query(TaskData).filter(TaskData.in_dryer == True).all()

@@ -1,4 +1,4 @@
-from services.createDryingItemService import CreateDryingItemService
+from services.carrier_services.createDryingItemService import CreateDryingItemService
 
 
 class CreateDryingItemController:

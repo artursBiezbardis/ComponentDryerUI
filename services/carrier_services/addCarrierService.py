@@ -13,6 +13,7 @@ class AddCarrierService:
         db_session = SessionLocal()
         carrier_repo = CarrierDataRepository(db_session)
         no_barcodes = ''
+
         if (self.barcode[0]).lower() == 'l' and len(self.barcode) == 4:
             self.add_carrier['carrier_position'] = self.barcode
             self.add_carrier['status_message'] = f'Dryer position {self.barcode} is set.'

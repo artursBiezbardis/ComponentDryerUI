@@ -29,7 +29,7 @@
                 text: 'Select part thickness'
                 values: [ 'hours greater than 72', 'hours less than 72']
                 disabled: True
-                on_text: root.set_time_to_dry()
+                on_text: root.set_time_to_dry(); root.ids.submit_interval.disabled = False
 
             TextInput:
                 id: drying_interval
@@ -38,8 +38,11 @@
                 disabled: True
 
 
+
             Button:
+                id: submit_interval
                 text: 'Submit'
                 disabled: True
+                on_press: root.start_drying(); root.dismiss()
         BoxLayout:
             orientation: 'horizontal'

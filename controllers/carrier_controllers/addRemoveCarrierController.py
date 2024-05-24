@@ -1,6 +1,5 @@
-
-from services.addCarrierService import AddCarrierService
-from services.removeCarierService import RemoveCarrierService
+from services.carrier_services.addCarrierService import AddCarrierService
+from services.carrier_services.removeCarierService import RemoveCarrierService
 
 
 class AddRemoveCarrierController:
