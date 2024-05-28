@@ -1,6 +1,6 @@
 from database import SessionLocal
 from repositories.taskDataRepository import TaskDataRepository
-
+from constants import ITEM_DATA_TEMPLATE
 
 class RemoveCarrierService:
 
@@ -12,7 +12,8 @@ class RemoveCarrierService:
     def main(self):
         db_session = SessionLocal()
         carrier_repo = TaskDataRepository(db_session)
-        carrier_repo.update_finished_task(1, 'test')
+        carrier_repo.update_finished_task(self.barcode)
+        self.remove_carrier = ITEM_DATA_TEMPLATE
         self.remove_carrier['status_message'] = 'Carrier ' + self.remove_carrier['carrier_barcode'] + ' is in Dryer!!'
         self.set_remove_status()
         db_session.close()

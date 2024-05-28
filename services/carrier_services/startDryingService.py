@@ -14,7 +14,6 @@ class StartDryingService:
 
         db_session = SessionLocal()
         task_repo = TaskDataRepository(db_session)
-        primary_key = task_repo.add_new_task(item_data_template)
-        item_data_template['task_id'] = primary_key
+        item_data_template = task_repo.add_new_task(item_data_template)
         db_session.close()
         return item_data_template

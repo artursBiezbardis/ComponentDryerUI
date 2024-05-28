@@ -7,6 +7,7 @@ from kivy.core.window import Window
 from view.mainLayout import MainLayout
 
 
+
 class DryerApp(App):
     def build(self):
         Window.maximize()

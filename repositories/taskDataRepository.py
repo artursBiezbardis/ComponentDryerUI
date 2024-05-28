@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from models.models import TaskData
+from datetime import datetime
 
 
 class TaskDataRepository:
@@ -8,25 +9,33 @@ class TaskDataRepository:
 
     def add_new_task(self, task_template):
 
-        new_task = TaskData(carrier_id=task_template['carrier_barcode'][1:],
+        new_task = TaskData(carrier_id=task_template['carrier_barcode'],
                             part_name=task_template['part_name'],
                             carrier_position=task_template['carrier_position'],
-                            in_dryer=task_template['in_dryer']
+                            in_dryer=task_template['in_dryer'],
+                            thickness=task_template['part_thickness'],
+                            msl=task_template['msl'],
+                            hours_less_72_hours=task_template['hours_less_72_hours'],
+                            hours_greater_than_72=task_template['hours_greater_than_72'],
+                            drying_start_interval=task_template['drying_start_interval'],
+                            add_interval='0.0',
+                            drying_finished=task_template['drying_finished'],
+                            start_time=datetime.now(),
                             )
+
         self.session.add(new_task)
         self.session.commit()
-        primary_key = self.session.query(TaskData).filter(
-            TaskData.carrier_id == task_template['carrier_barcode'][1:]).first()
+        task_template['task_id'] = new_task.id
 
-        return primary_key.id
+        return task_template
 
-    def update_finished_task(self, id_key, new_value):
+    def update_finished_task(self, barcode):
         # Query for the row by id
-        task = self.session.query(TaskData).filter(TaskData.id == id_key).first()
+        task = self.session.query(TaskData).filter(TaskData.carrier_id == barcode, TaskData.in_dryer == True).first()
         if task:
-            # Update the desired column
-            task.your_column = new_value
-            # Commit the changes to the database
+            task.end_time = datetime.now()
+            task.in_dryer = False
+            task.drying_finished = True
             self.session.commit()
             print(f"Row with id {id} updated successfully.")
         else:

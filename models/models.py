@@ -23,14 +23,15 @@ class CarrierData(Base):
 class TaskData(Base):
     __tablename__ = 'task_data'
     id = Column(Integer, primary_key=True, unique=True)
-    carrier_id = Column(Integer)
+    carrier_id = Column(String)
     part_name = Column(String)
     thickness = Column(String)
     msl = Column(String)
-    time_after_before_72_hours = Column(String)
-    drying_start_interval = Column(Interval)
-    add_interval = Column(Interval)
-    total_time = Column(Interval)
+    hours_less_72_hours = Column(Boolean, default=False)
+    hours_greater_than_72 = Column(Boolean, default=False)
+    drying_start_interval = Column(String)
+    add_interval = Column(String)
+    total_time = Column(String)
     start_time = Column(DateTime)
     end_time = Column(DateTime)
     carrier_position = Column(String)
@@ -38,8 +39,8 @@ class TaskData(Base):
     drying_finished = Column(Boolean)
 
 
-# engine = create_engine('sqlite:///../database.db')
-# Base.metadata.create_all(engine)
+#engine = create_engine('sqlite:///../database.db')
+#Base.metadata.create_all(engine)
 #
 # # Create a session
-# Session = sessionmaker(bind=engine)
+#Session = sessionmaker(bind=engine)

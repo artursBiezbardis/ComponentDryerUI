@@ -43,6 +43,6 @@
                 id: submit_interval
                 text: 'Submit'
                 disabled: True
-                on_press: root.start_drying(); root.dismiss()
+                on_press: root.start_drying(); root.dismiss(); root.refresh_main_layout();
         BoxLayout:
             orientation: 'horizontal'
