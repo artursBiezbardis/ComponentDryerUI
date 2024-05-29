@@ -15,3 +15,8 @@ ITEM_DATA_TEMPLATE = {'carrier_barcode': str(''),
                       'total_time': None
 
                       }
+ADD_REM0VE_CARRIER = {'carrier_barcode': '',
+                      'carrier_position': '',
+                      'add_status': False,
+                      'remove_status': False,
+                      'status_message': ''}

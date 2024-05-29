@@ -7,26 +7,26 @@ import controllers.carrier_controllers.createDryingItemController as createItem
 from constants import ITEM_DATA_TEMPLATE
 from controllers.carrier_controllers.updateDryingListController import UpdateCarrierListFromDBController
 from kivy.properties import ObjectProperty
+import copy
 
 
 class MainLayout(GridLayout):
     popup = ObjectProperty(None)
 
-    _add_remove_carrier = {'carrier_barcode': '',
-                           'carrier_position': '',
-                           'add_status': False,
-                           'remove_status': False,
-                           'status_message': ''}
+    ADD_REMOVE_CARRIER = {'carrier_barcode': '',
+                          'carrier_position': '',
+                          'add_status': False,
+                          'remove_status': False,
+                          'status_message': ''}
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.drying_carrier_collection = {}
-        self.add_carrier = self._add_remove_carrier
+        self.add_carrier = self.ADD_REMOVE_CARRIER.copy()
         self.item_data_template = {}
         self.focus_text_input(self)
         self.update_drying_carrier_collection()
         self.part_carrier_list()
-
 
     def update_drying_carrier_collection(self):
         self.drying_carrier_collection = UpdateCarrierListFromDBController().main()
@@ -47,8 +47,10 @@ class MainLayout(GridLayout):
         self.item_data_template = createItem.CreateDryingItemController(self.add_carrier).main()
         self.open_set_timer_form_popup()
         instance.text = ''
+        self.reset_after_removing_item()
         self.update_drying_carrier_collection()
         self.part_carrier_list()
+
         Clock.schedule_once(lambda dt: setattr(instance, 'focus', True), 1)
 
     def focus_text_input(self, dt):
@@ -65,8 +67,10 @@ class MainLayout(GridLayout):
         self.drying_carrier_collection = UpdateCarrierListFromDBController().main()
         self.update_drying_carrier_collection()
         self.part_carrier_list()
-        self.add_carrier = self._add_remove_carrier
-        self.item_data_template = ITEM_DATA_TEMPLATE
+        self.add_carrier = self.ADD_REMOVE_CARRIER.copy()
+        self.item_data_template = ITEM_DATA_TEMPLATE.copy()
         Clock.schedule_once(self.focus_text_input, 2)
 
-
+    def reset_after_removing_item(self):
+        if self.add_carrier['remove_status']:
+            self.add_carrier = self.ADD_REMOVE_CARRIER.copy()
