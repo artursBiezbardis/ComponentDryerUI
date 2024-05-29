@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from models.models import MslData
+import ast
 
 
 class MslDataRepository:
@@ -16,4 +17,9 @@ class MslDataRepository:
             result = data.hours_less_than_72
 
         return result
+
+    def filter_msl_for_thickness_values(self, value):
+
+        data = self.session.query(MslData).filter(MslData.thickness_level == value).all()
+        return data
 

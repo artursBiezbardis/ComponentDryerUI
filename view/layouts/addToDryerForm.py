@@ -2,7 +2,9 @@ from kivy.uix.popup import Popup
 from kivy.properties import DictProperty
 from controllers.carrier_controllers.setDryingIntervalController import SetDryingIntervalController
 from controllers.carrier_controllers.startDryingController import StartDryingController
+from controllers.msl_form_controllers.mslSelectionValuesController import MslSelectionValueController
 from kivy.properties import ObjectProperty
+
 
 
 class AddToDryerForm(Popup):
@@ -43,3 +45,15 @@ class AddToDryerForm(Popup):
 
         return new_text
 
+    def update_msl_selection_values(self, thickness):
+        values = MslSelectionValueController().main(thickness)
+        if values[0] == 'custom' and len(values) == 1:
+            self.ids.thickness_level.text = values[0]
+            self.ids.moisture_level.text = values[0]
+            self.ids.hours_greater_or_less_than_72.text = values[0]
+            self.ids.hours_greater_or_less_than_72.value = values[0]
+            self.ids.drying_interval.text = ''
+            self.ids.drying_interval.disabled = False
+
+        else:
+            self.ids.moisture_level.values = values
