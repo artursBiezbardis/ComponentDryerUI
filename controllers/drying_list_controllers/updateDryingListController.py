@@ -1,4 +1,4 @@
-from services.carrier_services.updateCarrierListFromDBService import UpdateCarrierListFromDBService
+from services.drying_list_services.updateCarrierListFromDBService import UpdateCarrierListFromDBService
 
 
 class UpdateCarrierListFromDBController:
