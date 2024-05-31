@@ -4,7 +4,7 @@
     orientation: 'horizontal'
     canvas.before:
         Color:
-            rgba: 0.24, 0.25, 0.25, 1
+            rgba: root.set_list_item_color()
         Rectangle:
             pos: self.pos
             size: self.size
@@ -16,6 +16,7 @@
             width: 1
 
     Label:
+        id: carrier_id
         text: root.barcode_text
         size_hint_x: 0.3
         canvas.before:
@@ -26,7 +27,18 @@
                 size: 0.5, self.height
 
     Label:
+        id: part_name
         text: root.part_text
+        size_hint_x: 0.3
+        canvas.before:
+            Color:
+                rgba: 0.12, 0.12, 0.13, 1
+            Rectangle:
+                pos: self.right - 0.5, self.y  # Adjust '5' to change the border width
+                size: 0.5, self.height
+    Label:
+        id: location
+        text: root.location
         size_hint_x: 0.3
         canvas.before:
             Color:

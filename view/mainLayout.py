@@ -7,6 +7,7 @@ import controllers.carrier_controllers.createDryingItemController as createItem
 from constants import ITEM_DATA_TEMPLATE
 from controllers.drying_list_controllers.updateDryingListController import UpdateCarrierListFromDBController
 from kivy.properties import ObjectProperty
+from datetime import datetime
 
 
 class MainLayout(GridLayout):
@@ -34,9 +35,14 @@ class MainLayout(GridLayout):
     def part_carrier_list(self, dt):
         box_layout = self.ids.scroll_box
         box_layout.clear_widgets()
+        self.sort_part_carrier_list_by_timer()
         if self.drying_carrier_collection:
             for item in self.drying_carrier_collection.values():
-                drying_item = Carrier.BarcodeItem(barcode_text=item['carrier_barcode'], part_text=item['part_name'], item=item)
+                drying_item = Carrier.BarcodeItem(
+                    barcode_text=item['carrier_barcode'],
+                    part_text=item['part_name'],
+                    item=item,
+                    location=item['carrier_position'])
                 box_layout.add_widget(drying_item)
 
     def on_enter(self, instance):
@@ -78,3 +84,30 @@ class MainLayout(GridLayout):
     def refresh_part_carrier_list(self, dt):
         Clock.schedule_interval(self.part_carrier_list, 60)
 
+    def sort_part_carrier_list_by_timer(self):
+
+        item_list = self.add_timer_value_to_item()
+
+        sorted_items_list = sorted(item_list.items(), key=lambda x: x[1]['interval_now'])
+
+        self.drying_carrier_collection = dict(sorted_items_list)
+
+    @staticmethod
+    def timer_calculation_for_sort(item):
+        time_now = datetime.strptime(str(datetime.now()), "%Y-%m-%d %H:%M:%S.%f")
+        start_time = datetime.strptime(str(item['start_time']), "%Y-%m-%d %H:%M:%S.%f")
+        interval_now = time_now - start_time
+        interval_now_sec = interval_now.total_seconds()
+        total_interval_sec = (int(item['drying_start_interval']) + int(item['add_interval'])) * 3600
+        result = total_interval_sec - interval_now_sec
+
+        return result
+
+    def add_timer_value_to_item(self):
+
+        new_collection = {}
+        for key, item in self.drying_carrier_collection.copy().items():
+            item['interval_now'] = int(self.timer_calculation_for_sort(item))
+            new_collection[key] = item
+
+        return new_collection.copy()
