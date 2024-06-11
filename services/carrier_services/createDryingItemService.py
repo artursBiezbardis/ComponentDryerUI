@@ -1,5 +1,5 @@
 from database import SessionLocal
-from repositories.carrierDataRepository import CarrierDataRepository
+from repositories.sql_lite_repositories.carrierDataRepository import CarrierDataRepository
 from constants import ITEM_DATA_TEMPLATE
 
 

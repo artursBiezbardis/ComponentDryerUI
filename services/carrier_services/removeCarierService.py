@@ -1,6 +1,6 @@
 from database import SessionLocal
-from repositories.taskDataRepository import TaskDataRepository
-from constants import ITEM_DATA_TEMPLATE, ADD_REM0VE_CARRIER
+from repositories.sql_lite_repositories.taskDataRepository import TaskDataRepository
+from constants import ADD_REM0VE_CARRIER
 
 
 class RemoveCarrierService:
@@ -15,7 +15,7 @@ class RemoveCarrierService:
         carrier_repo = TaskDataRepository(db_session)
         carrier_repo.update_finished_task(self.barcode)
         self.remove_carrier = ADD_REM0VE_CARRIER.copy()
-        self.remove_carrier['status_message'] = 'Carrier ' + self.remove_carrier['carrier_barcode'] + ' is in Dryer!!'
+        self.remove_carrier['status_message'] = 'Carrier ' + self.remove_carrier['carrier_barcode'] + ' removed from Dryer!!'
         self.set_remove_status()
         db_session.close()
         return self.remove_carrier

@@ -6,7 +6,6 @@ from controllers.msl_form_controllers.mslSelectionValuesController import MslSel
 from kivy.properties import ObjectProperty
 
 
-
 class AddToDryerForm(Popup):
     item_data_template = DictProperty({})
     main_layout = ObjectProperty(None)

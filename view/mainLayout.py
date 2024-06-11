@@ -2,6 +2,8 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.clock import Clock
 import view.layouts.barcodeItem as Carrier
 from view.layouts.addToDryerForm import AddToDryerForm
+from view.layouts.addValuePopup import AddValuePopup
+from view.layouts.infoPopup import InfoPopup
 import controllers.carrier_controllers.addRemoveCarrierController as addCarrier
 import controllers.carrier_controllers.createDryingItemController as createItem
 from constants import ITEM_DATA_TEMPLATE
@@ -12,12 +14,16 @@ from datetime import datetime
 
 class MainLayout(GridLayout):
     popup = ObjectProperty(None)
+    add_part_name_popup = ObjectProperty(None)
+    info_popup = ObjectProperty(None)
 
     ADD_REMOVE_CARRIER = {'carrier_barcode': '',
                           'carrier_position': '',
                           'add_status': False,
                           'remove_status': False,
-                          'status_message': ''}
+                          'status_message': '',
+                          'alert_message': False
+                          }
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -51,12 +57,13 @@ class MainLayout(GridLayout):
                                                                  self.drying_carrier_collection,
                                                                  barcode).main()
         self.item_data_template = createItem.CreateDryingItemController(self.add_carrier).main()
+        self.set_custom_part_popup()
         self.open_set_timer_form_popup()
+        self.show_info_popup(self.add_carrier)
         instance.text = ''
         self.reset_after_removing_item()
         self.update_drying_carrier_collection()
         self.part_carrier_list(self)
-
         Clock.schedule_once(lambda dt: setattr(instance, 'focus', True), 1)
 
     def focus_text_input(self, dt):
@@ -64,7 +71,7 @@ class MainLayout(GridLayout):
         scanner_input.focus = True
 
     def open_set_timer_form_popup(self):
-        if self.item_data_template:
+        if self.item_data_template and self.item_data_template['part_name']:
             self.popup = AddToDryerForm(item_data_template=self.item_data_template)
             self.popup.main_layout = self
             self.popup.open()
@@ -82,6 +89,7 @@ class MainLayout(GridLayout):
             self.add_carrier = self.ADD_REMOVE_CARRIER.copy()
 
     def refresh_part_carrier_list(self, dt):
+        Clock.schedule_interval(self.check_dryer_status, 60)
         Clock.schedule_interval(self.part_carrier_list, 60)
 
     def sort_part_carrier_list_by_timer(self):
@@ -111,3 +119,18 @@ class MainLayout(GridLayout):
             new_collection[key] = item
 
         return new_collection.copy()
+
+    def set_custom_part_popup(self):
+        if self.item_data_template and not self.item_data_template['part_name']:
+            self.add_part_name_popup = AddValuePopup(value_name='Part Name', item_data_template=self.item_data_template)
+            self.add_part_name_popup.main_layout = self
+            self.add_part_name_popup.open()
+
+    def show_info_popup(self, add_remove_carrier):
+        if add_remove_carrier['status_message']:
+            self.info_popup = InfoPopup(info=add_remove_carrier['status_message'],
+                                        alert_message=add_remove_carrier['alert_message'])
+            self.info_popup.open()
+
+    def check_dryer_status(self):
+        pass

@@ -1,5 +1,5 @@
 from database import SessionLocal
-from repositories.mslDataRepository import MslDataRepository
+from repositories.sql_lite_repositories.mslDataRepository import MslDataRepository
 
 
 class SetDryingIntervalService:

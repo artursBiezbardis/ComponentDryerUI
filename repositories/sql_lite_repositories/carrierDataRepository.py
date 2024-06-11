@@ -21,4 +21,6 @@ class CarrierDataRepository:
         db_barcode = db_barcode[1:]
         data = self.session.query(CarrierData).filter(CarrierData.carrier_id == db_barcode).first()
         self.session.close_all()
+        if not data:
+            return {'id': None, 'carrier_id': barcode, 'part_name': None}
         return {'id': data.id, 'carrier_id': data.carrier_id, 'part_name': data.part_name}

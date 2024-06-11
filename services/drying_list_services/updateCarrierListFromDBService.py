@@ -1,6 +1,6 @@
 from constants import ITEM_DATA_TEMPLATE
 from database import SessionLocal
-from repositories.taskDataRepository import TaskDataRepository
+from repositories.sql_lite_repositories.taskDataRepository import TaskDataRepository
 
 
 class UpdateCarrierListFromDBService:

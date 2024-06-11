@@ -5,7 +5,7 @@ from services.carrier_services.removeCarierService import RemoveCarrierService
 class AddRemoveCarrierController:
 
     def __init__(self, add_remove_carrier: dict, drying_carrier_collection: dict, barcode: str):
-        self.add_remove_carrier = add_remove_carrier
+        self.add_remove_carrier = add_remove_carrier.copy()
         self.barcode = barcode
         self.drying_carrier_collection = drying_carrier_collection
 

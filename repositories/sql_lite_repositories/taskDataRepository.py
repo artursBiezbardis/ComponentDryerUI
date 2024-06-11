@@ -17,8 +17,8 @@ class TaskDataRepository:
                             msl=task_template['msl'],
                             hours_less_72_hours=task_template['hours_less_72_hours'],
                             hours_greater_than_72=task_template['hours_greater_than_72'],
-                            drying_start_interval=task_template['drying_start_interval'],
-                            add_interval='0.0',
+                            drying_start_interval=float(task_template['drying_start_interval'])*60,
+                            add_interval='0',
                             drying_finished=task_template['drying_finished'],
                             start_time=datetime.now(),
                             )

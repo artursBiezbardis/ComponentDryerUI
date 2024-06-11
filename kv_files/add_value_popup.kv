@@ -1,0 +1,60 @@
+#:import Window kivy.core.window.Window
+
+
+<AddValuePopup>
+    cols:1
+    title: 'Add custom ' + root.value_name
+    size_hint: None, None
+    size: Window.width / 4, Window.height / 4
+    GridLayout:
+        cols: 1
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_x: 1
+            size_hint_y: None
+            height: 50
+            cols: 8
+
+            Label:
+                canvas.before:
+                    Color:
+                        rgba: 0.01, 0.01, 0.13, 1
+                    Rectangle:
+                        pos: self.right - 0.5, self.y  # Adjust '5' to change the border width
+                        size: 0.5, self.height
+                text: root.value_name
+            TextInput:
+                id:text_input
+                canvas.before:
+                    Color:
+                        rgba: 0.01, 0.01, 0.13, 1
+                    Rectangle:
+                        pos: self.right - 0.5, self.y  # Adjust '5' to change the border width
+                        size: 0.5, self.height
+                text: ''
+                multiline: False
+                on_text: root.on_text_change(self, self.text)
+
+
+        BoxLayout:
+            cols: 1
+            orientation: 'horizontal'
+            size_hint_x: 0.5
+            size_hint_y: None
+            height: 100
+            Button:
+                id: ok
+                text: 'OK'
+                disabled: True
+                on_press:
+                    root.submit_value();
+                    root.main_layout.open_set_timer_form_popup();
+                    root.main_layout.on_dismiss_refresh_main();
+                    root.dismiss();
+            Button:
+                id: cancel
+                text: 'Cancel'
+                disabled: False
+                on_press:
+                    root.dismiss();
+                    root.refresh_main_layout();
