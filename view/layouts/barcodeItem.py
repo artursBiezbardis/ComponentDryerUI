@@ -34,7 +34,7 @@ class BarcodeItem(BoxLayout):
         start_time = datetime.strptime(str(self.item['start_time']), "%Y-%m-%d %H:%M:%S.%f")
         interval_now = time_now - start_time
         interval_now_sec = interval_now.total_seconds()
-        total_interval_sec = (int(self.item['drying_start_interval']) + int(self.item['add_interval'])) * 60
+        total_interval_sec = (int(self.item['drying_start_interval']) + int(self.item['add_interval']))
         result = total_interval_sec - interval_now_sec
 
         return result

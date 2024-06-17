@@ -7,7 +7,7 @@ class CreateDryingItemService:
 
     def __init__(self, add_carrier):
         self.add_carrier = add_carrier
-        self.item_template = ITEM_DATA_TEMPLATE
+        self.item_template = ITEM_DATA_TEMPLATE.copy()
 
     def main(self):
 

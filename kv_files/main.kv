@@ -85,6 +85,7 @@
             TextInput:
                 id: scanner_input
                 on_text_validate: root.on_enter(self)
+                on_double_tap: root.open_key_board()
                 multiline: False
                 hint_text: 'Scan barcode here'
                 size_hint_y: None

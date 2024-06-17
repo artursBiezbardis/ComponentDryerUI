@@ -4,7 +4,7 @@ from repositories.sql_lite_repositories.taskDataRepository import TaskDataReposi
 
 
 class UpdateCarrierListFromDBService:
-    _ITEM_DATA_TEMPLATE = ITEM_DATA_TEMPLATE
+    _ITEM_DATA_TEMPLATE = ITEM_DATA_TEMPLATE.copy
 
     def main(self):
         db_session = SessionLocal()

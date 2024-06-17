@@ -12,6 +12,10 @@ class AddToDryerForm(Popup):
 
     def __int__(self, **kwargs):
         super(AddToDryerForm, self).__init__(**kwargs)
+        self.main_layout.ids.scanner_input.readonly = True
+        self.main_layout.ids.scanner_input.focus = False
+        self.ids.thickness_level.focus = True
+        self.main_layout.self.add_carrier['add_status'] = False
 
     def set_time_to_dry(self):
         self.ids.drying_interval.text = str(SetDryingIntervalController().main(self.ids.thickness_level.text,
@@ -37,6 +41,7 @@ class AddToDryerForm(Popup):
         new_item_data_template['moisture_level'] = self.ids.moisture_level.text
         new_item_data_template['hours_greater_or_less_than_72'] = self.ids.hours_greater_or_less_than_72.text
         new_item_data_template['drying_interval'] = self.ids.drying_interval.text
+        self.main_layout.ids.scanner_input.readonly = False
 
     def create_snake_case_text(self):
 

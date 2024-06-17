@@ -13,11 +13,13 @@ class InfoPopup(Popup):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.main_layout.ids.scanner_input.readonly = True
         if not self.dismiss_button:
             Clock.schedule_once(self.dismiss_time, self.time)
 
     def dismiss_time(self, dt):
         self.dismiss()
+        self.main_layout.ids.scanner_input.readonly = False
 
     def info_window_color(self):
         if self.alert_message:

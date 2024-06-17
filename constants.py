@@ -12,7 +12,9 @@ ITEM_DATA_TEMPLATE = {'carrier_barcode': str(''),
                       'task_id': None,
                       'start_time': None,
                       'end_time': None,
-                      'total_time': None
+                      'total_time': None,
+                      'popup_opened': False,
+                      'custom_part': False
 
                       }
 ADD_REM0VE_CARRIER = {'carrier_barcode': '',

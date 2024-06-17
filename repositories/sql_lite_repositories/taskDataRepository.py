@@ -17,7 +17,7 @@ class TaskDataRepository:
                             msl=task_template['msl'],
                             hours_less_72_hours=task_template['hours_less_72_hours'],
                             hours_greater_than_72=task_template['hours_greater_than_72'],
-                            drying_start_interval=float(task_template['drying_start_interval'])*60,
+                            drying_start_interval=float(task_template['drying_start_interval'])*3600,
                             add_interval='0',
                             drying_finished=task_template['drying_finished'],
                             start_time=datetime.now(),
@@ -30,7 +30,6 @@ class TaskDataRepository:
         return task_template
 
     def update_finished_task(self, barcode):
-        # Query for the row by id
         task = self.session.query(TaskData).filter(TaskData.carrier_id == barcode, TaskData.in_dryer == True).first()
         if task:
             task.end_time = datetime.now()
@@ -43,3 +42,9 @@ class TaskDataRepository:
 
     def get_all_drying_items(self):
         return self.session.query(TaskData).filter(TaskData.in_dryer == True).all()
+
+    def update_add_time(self, carrier_id, add_interval):
+        task = self.session.query(TaskData).filter(TaskData.carrier_id == carrier_id, TaskData.in_dryer == True).first()
+        if task:
+            task.add_interval = add_interval
+            self.session.commit()

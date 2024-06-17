@@ -1,11 +1,13 @@
 import serial
 from utilities.serial_utils import find_available_ports
 
+
 class SerialManager:
     def __init__(self, port=None, baudrate=9600):
         self.port = port if port else find_available_ports()[0]
         self.baudrate = baudrate
         self.connection = None
+
     def connect(self):
         if self.port:
             self.connection = serial.Serial(self.port, self.baudrate)

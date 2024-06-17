@@ -6,7 +6,7 @@ class AddCarrierService:
 
     def __init__(self, add_carrier: dict, drying_carrier_collection: dict, barcode: str):
         self.add_carrier = add_carrier.copy()
-        self.barcode = barcode
+        self.barcode = barcode.lower()
         self.drying_carrier_collection = drying_carrier_collection
 
     def main(self):
