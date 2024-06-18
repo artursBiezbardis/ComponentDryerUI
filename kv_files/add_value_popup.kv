@@ -33,7 +33,8 @@
                         size: 0.5, self.height
                 text: ''
                 multiline: False
-                on_text: root.on_text_change(self, self.text)
+                on_text: root.on_text_change()
+                on_double_tap: root.open_key_board()
 
 
         BoxLayout:
@@ -48,8 +49,6 @@
                 disabled: True
                 on_press:
                     root.submit_value();
-                    root.main_layout.open_set_timer_form_popup();
-                    root.main_layout.on_dismiss_refresh_main();
                     root.dismiss();
             Button:
                 id: cancel

@@ -4,7 +4,7 @@ import view.layouts.barcodeItem as Carrier
 from view.layouts.addToDryerForm import AddToDryerForm
 from view.layouts.addValuePopup import AddValuePopup
 from view.layouts.infoPopup import InfoPopup
-from view.layouts.keyBoardPopup import KeyBoardPopup
+from view.layouts.keyboardPopup import KeyboardPopup
 import controllers.carrier_controllers.addRemoveCarrierController as addCarrier
 import controllers.carrier_controllers.createDryingItemController as createItem
 from constants import ITEM_DATA_TEMPLATE
@@ -57,13 +57,14 @@ class MainLayout(GridLayout):
                 box_layout.add_widget(drying_item)
 
     def on_enter(self, instance):
+
         barcode: str = instance.text
         instance.text = ''
         self.add_carrier = addCarrier.AddRemoveCarrierController(self.add_carrier,
                                                                  self.drying_carrier_collection,
                                                                  barcode).main()
         self.item_data_template = createItem.CreateDryingItemController(self.add_carrier, self.item_data_template).main()
-        self.set_custom_part_popup(instance)
+        self.set_custom_part_popup()
         self.open_set_timer_form_popup()
         self.show_info_popup(self.add_carrier)
         self.reset_after_removing_item()
@@ -120,14 +121,14 @@ class MainLayout(GridLayout):
 
         return new_collection.copy()
 
-    def set_custom_part_popup(self, instance):
+    def set_custom_part_popup(self):
         if not self.item_data_template['part_name'] and self.add_carrier['add_status']:
-            self.item_data_template['popup_opened'] = True
+            # self.item_data_template['popup_opened'] = True
             self.add_part_name_popup = AddValuePopup(value_name='Part Name',
                                                      item_data_template=self.item_data_template,
                                                      auto_dismiss=False
                                                      )
-            self.add_part_name_popup.main_layout = self
+            self.add_part_name_popup.layout_for_popup = self
             self.add_part_name_popup.open()
 
     def show_info_popup(self, add_remove_carrier):
@@ -153,5 +154,8 @@ class MainLayout(GridLayout):
             Clock.schedule_once(lambda dt: setattr(instance, 'focus', True), 1)
 
     def open_key_board(self):
-        key_board = KeyBoardPopup()
+        key_board = KeyboardPopup(layout_for_keyboard=self)
         key_board.open()
+
+    def enter_keyboard_text(self, keyboard_text_instance):
+        self.on_enter(keyboard_text_instance)

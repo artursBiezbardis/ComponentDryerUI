@@ -16,6 +16,7 @@ class DryerApp(App):
         Builder.load_file('kv_files/add_to_dryer_form.kv')
         Builder.load_file('kv_files/add_value_popup.kv')
         Builder.load_file('kv_files/info_popup.kv')
-        Builder.load_file('kv_files/key_board_popup.kv')
+        Builder.load_file('kv_files/keyboard_popup.kv')
+        Builder.load_file('kv_files/num_pad_popup.kv')
         Window.clearcolor = (0.12, 0.12, 0.13, 1)
         return MainLayout()
