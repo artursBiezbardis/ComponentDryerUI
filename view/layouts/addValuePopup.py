@@ -24,7 +24,6 @@ class AddValuePopup(Popup):
         self.layout_for_popup.ids.scanner_input.readonly = False
         self.layout_for_popup.open_set_timer_form_popup()
 
-
     def open_key_board(self):
         key_board = KeyboardPopup(layout_for_keyboard=self)
         key_board.open()

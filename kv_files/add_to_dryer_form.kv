@@ -103,34 +103,40 @@
                 id: thickness_level
                 text: 'Select'
                 values: [ '< 0.5mm', '0.8 => 0.5mm', '1.4 => 0.8mm', '2 => 1.4mm', '4.5 => 2mm', 'custom']
+                on_press:
+                    root.reset_thickness_spinner();
+                    root.reset_msl_spinner();
+                    root.reset_condition_spinner()
                 on_text:
                     root.update_msl_selection_values(root.ids.thickness_level.text);
+                    root.disable_spinners();
 
             Spinner:
                 id: moisture_level
                 text: 'Select'
-                #values: [ 'msl 2', 'msl 2a', 'msl 3', 'msl 4', 'msl 5', 'msl 5a', 'custom']
                 disabled: True
-                on_text: root.ids.hours_greater_or_less_than_72.disabled = False
+                on_press:
+                    root.reset_msl_spinner();
+                    root.reset_condition_spinner();
+                on_text:
+                    root.ids.hours_greater_or_less_than_72.disabled = False;
+                    root.disable_spinners();
 
             Spinner:
                 id: hours_greater_or_less_than_72
                 text: 'Select'
                 values: [ 'hours greater than 72', 'hours less than 72']
                 disabled: True
+                on_press: root.reset_condition_spinner()
                 on_text:
                     root.set_time_to_dry();
-                    root.ids.submit_interval.disabled = False;
-                    root.ids.thickness_level.disabled = True;
-                    root.ids.moisture_level.disabled = True;
-
 
             TextInput:
                 id: drying_interval
                 multiline: False
                 value: ''
                 disabled: True
-                on_double_tap: root.ids.drying_interval.text = 'test'
+                on_double_tap: root.open_num_pad()
 
             Button:
                 id: submit_interval
@@ -144,9 +150,10 @@
         BoxLayout:
             cols: 1
             orientation: 'horizontal'
+            padding: 100
             size_hint_x: 0.5
             size_hint_y: None
-            height: 100
+            height: 300
 
             Button:
                 id: cancel

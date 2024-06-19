@@ -18,7 +18,8 @@
             orientation: 'horizontal'
             size_hint_x: 1
             size_hint_y: None
-            height: 80
+            height: 100
+            width: 100
             cols: 3
             Button:
                 id: 1
@@ -37,7 +38,8 @@
             orientation: 'horizontal'
             size_hint_x: 1
             size_hint_y: None
-            height: 80
+            height: 100
+            width: 100
             cols: 3
             Button:
                 id: 4
@@ -56,9 +58,10 @@
             orientation: 'horizontal'
             size_hint_x: 1
             size_hint_y: None
-            height: 80
+            height: 100
+            width: 100
             cols: 3
-             Button:
+            Button:
                 id: 7
                 text: '7'
                 on_press: root.type_letter(self.text)
@@ -74,12 +77,20 @@
             orientation: 'horizontal'
             size_hint_x: 1
             size_hint_y: None
-            height: 80
-            cols: 5
+            height: 100
+            width: 100
+            cols: 1
             Button:
                 id: 0
                 text: '0'
                 on_press: root.type_letter(self.text)
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_x: 1
+            size_hint_y: None
+            height: 100
+            width: 100
+            cols: 3
             Button:
                 id: OK
                 text: 'OK'

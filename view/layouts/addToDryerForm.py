@@ -3,6 +3,7 @@ from kivy.properties import DictProperty
 from controllers.carrier_controllers.setDryingIntervalController import SetDryingIntervalController
 from controllers.carrier_controllers.startDryingController import StartDryingController
 from controllers.msl_form_controllers.mslSelectionValuesController import MslSelectionValueController
+from view.layouts.numPadPopup import NumPadPopup
 from kivy.properties import ObjectProperty
 
 
@@ -14,13 +15,29 @@ class AddToDryerForm(Popup):
         super(AddToDryerForm, self).__init__(**kwargs)
         self.main_layout.ids.scanner_input.readonly = True
         self.main_layout.ids.scanner_input.focus = False
-        self.ids.thickness_level.focus = True
+        self.ids.submit_interval.focus = True
         self.main_layout.self.add_carrier['add_status'] = False
 
     def set_time_to_dry(self):
-        self.ids.drying_interval.text = str(SetDryingIntervalController().main(self.ids.thickness_level.text,
-                                                                               self.ids.moisture_level.text,
-                                                                               self.ids.hours_greater_or_less_than_72.text))
+        if self.spinners_selected():
+            self.ids.drying_interval.text = str(SetDryingIntervalController().main(self.ids.thickness_level.text,
+                                                                                   self.ids.moisture_level.text,
+                                                                                   self.ids.hours_greater_or_less_than_72.text))
+            self.ids.submit_interval.disabled = False
+
+    def spinners_selected(self) -> bool:
+        result = False
+        drying_parameters = [self.ids.thickness_level.text,
+                             self.ids.moisture_level.text,
+                             self.ids.hours_greater_or_less_than_72.text]
+        select = 'Select'
+        custom = 'custom'
+
+        if select not in drying_parameters:
+            result = True
+        if custom in drying_parameters:
+            result = False
+        return result
 
     def start_drying(self):
         new_item_data_template = {}
@@ -51,13 +68,45 @@ class AddToDryerForm(Popup):
 
     def update_msl_selection_values(self, thickness):
         values = MslSelectionValueController().main(thickness)
-        if values[0] == 'custom' and len(values) == 1:
+        if values and values[0] == 'custom' and len(values) == 1:
             self.ids.thickness_level.text = values[0]
             self.ids.moisture_level.text = values[0]
             self.ids.hours_greater_or_less_than_72.text = values[0]
             self.ids.hours_greater_or_less_than_72.value = values[0]
             self.ids.drying_interval.text = ''
-            self.ids.drying_interval.disabled = False
 
         else:
             self.ids.moisture_level.values = values
+
+    def open_num_pad(self):
+        num_pad = NumPadPopup(layout_for_num_pad=self, auto_dismiss=False)
+        num_pad.open()
+
+    def enter_num_pad_text(self, num_pad_instance):
+        self.ids.drying_interval.text = num_pad_instance.text
+
+    def disable_spinners(self):
+        if self.ids.thickness_level.text == 'custom':
+            self.ids.moisture_level.disabled = True
+            self.ids.hours_greater_or_less_than_72.disabled = True
+            self.ids.drying_interval.disabled = False
+        else:
+            self.ids.moisture_level.disabled = False
+            if self.ids.hours_greater_or_less_than_72.text != 'Select':
+                self.ids.hours_greater_or_less_than_72.disabled = False
+            self.ids.drying_interval.disabled = True
+
+    def reset_condition_spinner(self):
+        self.ids.hours_greater_or_less_than_72.text = 'Select'
+        self.ids.submit_interval.disabled = True
+
+    def reset_thickness_spinner(self):
+        self.ids.thickness_level.text = 'Select'
+        self.ids.submit_interval.disabled = True
+
+    def reset_msl_spinner(self):
+        self.ids.moisture_level.text = 'Select'
+        self.ids.submit_interval.disabled = True
+
+    def enable_submit(self):
+        self.ids.submit_interval.disabled = False
