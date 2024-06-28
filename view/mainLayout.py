@@ -12,6 +12,9 @@ from controllers.drying_list_controllers.updateDryingListController import Updat
 from kivy.properties import ObjectProperty
 from datetime import datetime
 from controllers.timer_update_controllers.timerUpdateController import TimerUpdateController
+from controllers.dryer_communications_controllers.dryerCommunicationsController import DryerCommunicationsController
+from models.serialComminicatorModels import StatusCommunicator, RedLightCommunicator
+from interfaces.serialCommunicationInterface import SerialCommunicationInterface
 
 
 class MainLayout(GridLayout):
@@ -36,7 +39,7 @@ class MainLayout(GridLayout):
         self.update_drying_carrier_collection()
         self.part_carrier_list(self)
         self.refresh_part_carrier_list(self)
-
+        self.dryer_communication = DryerCommunicationsController()
 
     def update_drying_carrier_collection(self):
         self.drying_carrier_collection = UpdateCarrierListFromDBController().main()
@@ -123,7 +126,7 @@ class MainLayout(GridLayout):
 
     def set_custom_part_popup(self):
         if not self.item_data_template['part_name'] and self.add_carrier['add_status']:
-            # self.item_data_template['popup_opened'] = True
+            self.dryer_stack_lights_switch(RedLightCommunicator())
             self.add_part_name_popup = AddValuePopup(value_name='Part Name',
                                                      item_data_template=self.item_data_template,
                                                      auto_dismiss=False
@@ -138,11 +141,26 @@ class MainLayout(GridLayout):
                                         alert_message=add_remove_carrier['alert_message'],
                                         auto_dismiss=False
                                         )
-
             self.info_popup.open()
 
     def check_and_update_dryer_status(self, dt):
-        TimerUpdateController().main()
+        dryer_status = self.dryer_communication.main(StatusCommunicator())
+        TimerUpdateController(dryer_status=dryer_status).main()
+        self.set_status_color(dryer_status)
+
+    @staticmethod
+    def dryer_comm_deserialization(status) -> bool:
+        result = False
+        if status:
+            if status == 'S11':
+                result = True
+        return result
+
+    def set_status_color(self, dryer_status):
+        if dryer_status:
+            self.ids.status.color = [0.34, 0.59, 0.36, 1]
+        else:
+            self.ids.status.color = [0.96, 0.29, 0.25, 1]
 
     def refresh_part_carrier_list(self, dt):
         Clock.schedule_interval(self.check_and_update_dryer_status, 5)
@@ -159,3 +177,8 @@ class MainLayout(GridLayout):
 
     def enter_keyboard_text(self, keyboard_text_instance):
         self.on_enter(keyboard_text_instance)
+
+    def dryer_stack_lights_switch(self, light_color_model: SerialCommunicationInterface):
+
+        result = self.dryer_communication.main(light_color_model)
+
