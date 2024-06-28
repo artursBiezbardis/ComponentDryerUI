@@ -52,3 +52,8 @@ Thumbs.db
 .kate-swp/
 /scripts/
 /alembic/
+
+bin/*
+lib/*
+lib64
+start_main.sh
