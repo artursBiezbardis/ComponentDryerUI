@@ -90,6 +90,7 @@
                     Rectangle:
                         pos: self.right - 0.5, self.y  # Adjust '5' to change the border width
                         size: 0.5, self.height
+                id: part_name
                 text: root.item_data_template.get('part_name', 'N/A')
             Label:
                 canvas.before:
@@ -125,7 +126,7 @@
             Spinner:
                 id: hours_greater_or_less_than_72
                 text: 'Select'
-                values: [ 'hours greater than 72', 'hours less than 72']
+                values: [ 'hours greater\nthan 72', 'hours less\nthan 72']
                 disabled: True
                 on_press: root.reset_condition_spinner()
                 on_text:
@@ -148,17 +149,85 @@
                     root.refresh_main_layout();
 
         BoxLayout:
-            cols: 1
             orientation: 'horizontal'
-            padding: 100
-            size_hint_x: 0.5
+            size_hint_x: 1
             size_hint_y: None
-            height: 300
+            height: 150
+            cols: 8
+            padding: 0,50,0,0
 
+            Label:
+                text: ' '
+            Label:
+                text: ' '
+            Label:
+                text: ' '
+            Label:
+                text: ' '
+            Label:
+                text: ' '
+            Label:
+                text: ' '
+            Label:
+                text: ' '
             Button:
                 id: cancel
                 text: 'Cancel'
-                disabled: False
                 on_press:
                     root.dismiss();
                     root.refresh_main_layout();
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_x: 1
+            size_hint_y: None
+            padding_top: 20
+            height: 50
+            cols: 5
+            Label:
+                text: 'Thickness'
+                size_hint_x: 0.3
+                canvas.before:
+                    Color:
+                        rgba: 0.12, 0.12, 0.13, 1
+                    Rectangle:
+                        pos: self.right - 0.5, self.y  # Adjust '5' to change the border width
+                        size: 0.5, self.height
+
+            Label:
+                text: 'MSL'
+                size_hint_x: 0.3
+                canvas.before:
+                    Color:
+                        rgba: 0.12, 0.12, 0.13, 1
+                    Rectangle:
+                        pos: self.right - 0.5, self.y  # Adjust '5' to change the border width
+                        size: 0.5, self.height
+            Label:
+                text: 'Hours grater or less'
+                size_hint_x: 0.3
+                canvas.before:
+                    Color:
+                        rgba: 0.12, 0.12, 0.13, 1
+                    Rectangle:
+                        pos: self.right - 0.5, self.y
+                        size: 0.5, self.height
+
+            Label:
+                text: 'Drying interval'
+                size_hint_x: 0.3
+
+
+            Label:
+                text: ''
+                size_hint_x: 0.2
+
+        ScrollView:
+            size_hint_y: 1
+            do_scroll_x: False
+            do_scroll_y: True
+
+            GridLayout:
+                id: scroll_box
+                cols: 1
+                size_hint_y: None
+                height: self.minimum_height

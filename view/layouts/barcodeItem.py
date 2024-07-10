@@ -1,6 +1,7 @@
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import StringProperty, ObjectProperty
 from datetime import datetime
+from utilities.timer_utils import TimerUtilities
 
 
 class BarcodeItem(BoxLayout):
@@ -22,7 +23,7 @@ class BarcodeItem(BoxLayout):
         return f"{hours} : {minutes:02d}"
 
     def set_list_item_color(self):
-        result = self.calculate_timer_in_sec()
+        result = TimerUtilities().time_left(self.item)
         if result <= 0:
 
             return eval('0.34, 0.59, 0.36, 1')

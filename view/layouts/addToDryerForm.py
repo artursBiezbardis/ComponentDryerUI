@@ -1,28 +1,33 @@
 from kivy.uix.popup import Popup
-from kivy.properties import DictProperty
+from view.layouts.partMslItem import PartMslItem
 from controllers.carrier_controllers.setDryingIntervalController import SetDryingIntervalController
 from controllers.carrier_controllers.startDryingController import StartDryingController
 from controllers.msl_form_controllers.mslSelectionValuesController import MslSelectionValueController
+from controllers.msl_form_controllers.part_msl_list_controller import PartMSLListController
 from view.layouts.numPadPopup import NumPadPopup
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty, DictProperty
 
 
 class AddToDryerForm(Popup):
     item_data_template = DictProperty({})
     main_layout = ObjectProperty(None)
 
-    def __int__(self, **kwargs):
+    def __init__(self, **kwargs):
         super(AddToDryerForm, self).__init__(**kwargs)
         self.main_layout.ids.scanner_input.readonly = True
         self.main_layout.ids.scanner_input.focus = False
         self.ids.submit_interval.focus = True
-        self.main_layout.self.add_carrier['add_status'] = False
+        self.main_layout.add_carrier['add_status'] = False
+        self.msl_sets_for_part = self.collect_msl_sets()
+        self.msl_list()
+        self.selected_item_set = {}
 
     def set_time_to_dry(self):
         if self.spinners_selected():
+            value_adjustment = self.ids.hours_greater_or_less_than_72.text.replace('\n', ' ')
             self.ids.drying_interval.text = str(SetDryingIntervalController().main(self.ids.thickness_level.text,
                                                                                    self.ids.moisture_level.text,
-                                                                                   self.ids.hours_greater_or_less_than_72.text))
+                                                                                   value_adjustment))
             self.ids.submit_interval.disabled = False
 
     def spinners_selected(self) -> bool:
@@ -51,6 +56,7 @@ class AddToDryerForm(Popup):
         return start_drying.main(new_item_data_template)
 
     def refresh_main_layout(self):
+
         self.main_layout.on_dismiss_refresh_main()
 
     def update_new_item_data_template(self, new_item_data_template):
@@ -110,3 +116,28 @@ class AddToDryerForm(Popup):
 
     def enable_submit(self):
         self.ids.submit_interval.disabled = False
+
+    def collect_msl_sets(self):
+        collection = PartMSLListController().main(self.ids.part_name.text)
+
+        return collection
+
+    def msl_list(self):
+
+        box_layout = self.ids.scroll_box
+        box_layout.clear_widgets()
+        if self.msl_sets_for_part:
+            for item in self.msl_sets_for_part.values():
+                drying_item = PartMslItem(
+                    item=item,
+                    add_to_dryer_form=self)
+                box_layout.add_widget(drying_item)
+
+    def set_form_from_list(self, item):
+
+        self.ids.thickness_level.text = item['thickness']
+        self.ids.moisture_level.text = item['msl']
+        self.ids.hours_greater_or_less_than_72.text = item['hours_grater_or_less']
+        self.ids.drying_interval.text = str(item['drying_start_interval'])
+        self.ids.submit_interval.disabled = False
+

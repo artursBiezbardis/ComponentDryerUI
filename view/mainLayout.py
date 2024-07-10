@@ -10,11 +10,15 @@ import controllers.carrier_controllers.createDryingItemController as createItem
 from constants import ITEM_DATA_TEMPLATE
 from controllers.drying_list_controllers.updateDryingListController import UpdateCarrierListFromDBController
 from kivy.properties import ObjectProperty
-from datetime import datetime
-from controllers.timer_update_controllers.timerUpdateController import TimerUpdateController
 from controllers.dryer_communications_controllers.dryerCommunicationsController import DryerCommunicationsController
 from models.serialComminicatorModels import StatusCommunicator, RedLightCommunicator
 from interfaces.serialCommunicationInterface import SerialCommunicationInterface
+from controllers.last_app_activity_controller.lastAppActivityRegisterController import LastAppActivityRegisterController
+from utilities.timer_utils import TimerUtilities
+from config import TIMER_SETTINGS
+from controllers.timer_update_controllers.deviceOffIntervalController import DeviceOffIntervalController
+from controllers.timer_update_controllers.timerUpdateController import TimerUpdateController
+
 
 
 class MainLayout(GridLayout):
@@ -32,6 +36,12 @@ class MainLayout(GridLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.info_popup_ok_button_attribute_1 = False
+        self.info_popup_ok_button_attribute_2 = False
+        self.info_popup_dismiss_button_attribute_1 = False
+        self.info_popup_dismiss_button_attribute_2 = False
+        self.app_start_event = None
+        self.last_action_interval = DeviceOffIntervalController().main()
         self.drying_carrier_collection = {}
         self.add_carrier = self.ADD_REMOVE_CARRIER.copy()
         self.item_data_template = ITEM_DATA_TEMPLATE.copy()
@@ -39,18 +49,17 @@ class MainLayout(GridLayout):
         self.update_drying_carrier_collection()
         self.part_carrier_list(self)
         self.refresh_part_carrier_list(self)
-        self.dryer_communication = DryerCommunicationsController()
+        self.dryer_communication = DryerCommunicationsController(self)
 
     def update_drying_carrier_collection(self):
         self.drying_carrier_collection = UpdateCarrierListFromDBController().main()
 
     def part_carrier_list(self, dt):
-
         self.update_drying_carrier_collection()
         box_layout = self.ids.scroll_box
         box_layout.clear_widgets()
-        self.sort_part_carrier_list_by_timer()
         if self.drying_carrier_collection:
+            self.sort_part_carrier_list_by_timer()
             for item in self.drying_carrier_collection.values():
                 drying_item = Carrier.BarcodeItem(
                     barcode_text=item['carrier_barcode'],
@@ -81,7 +90,7 @@ class MainLayout(GridLayout):
 
     def open_set_timer_form_popup(self):
         if self.item_data_template['part_name'] and not self.item_data_template['popup_opened']:
-            self.popup = AddToDryerForm(item_data_template=self.item_data_template, auto_dismiss=False)
+            self.popup = AddToDryerForm(item_data_template=self.item_data_template, main_layout=self, auto_dismiss=False)
             self.popup.main_layout = self
             self.item_data_template['popup_opened'] = True
             self.popup.open()
@@ -92,7 +101,8 @@ class MainLayout(GridLayout):
         self.part_carrier_list(self)
         self.add_carrier = self.ADD_REMOVE_CARRIER.copy()
         self.item_data_template = ITEM_DATA_TEMPLATE.copy()
-        Clock.schedule_once(self.focus_text_input, 2)
+        self.ids.scanner_input.readonly = False
+        Clock.schedule_once(self.focus_text_input, 1)
 
     def reset_after_removing_item(self):
         if self.add_carrier['remove_status']:
@@ -104,22 +114,11 @@ class MainLayout(GridLayout):
         sorted_items_list = sorted(item_list.items(), key=lambda x: x[1]['interval_now'])
         self.drying_carrier_collection = dict(sorted_items_list)
 
-    @staticmethod
-    def timer_calculation_for_sort(item):
-        time_now = datetime.strptime(str(datetime.now()), "%Y-%m-%d %H:%M:%S.%f")
-        start_time = datetime.strptime(str(item['start_time']), "%Y-%m-%d %H:%M:%S.%f")
-        interval_now = time_now - start_time
-        interval_now_sec = interval_now.total_seconds()
-        total_interval_sec = (int(item['drying_start_interval']) + int(item['add_interval'])) * 3600
-        result = total_interval_sec - interval_now_sec
-
-        return result
-
     def add_timer_value_to_item(self):
 
         new_collection = {}
         for key, item in self.drying_carrier_collection.copy().items():
-            item['interval_now'] = int(self.timer_calculation_for_sort(item))
+            item['interval_now'] = int(TimerUtilities().time_left(item))
             new_collection[key] = item
 
         return new_collection.copy()
@@ -144,17 +143,11 @@ class MainLayout(GridLayout):
             self.info_popup.open()
 
     def check_and_update_dryer_status(self, dt):
-        dryer_status = self.dryer_communication.main(StatusCommunicator())
-        TimerUpdateController(dryer_status=dryer_status).main()
-        self.set_status_color(dryer_status)
 
-    @staticmethod
-    def dryer_comm_deserialization(status) -> bool:
-        result = False
-        if status:
-            if status == 'S11':
-                result = True
-        return result
+        LastAppActivityRegisterController().main()
+        dryer_status = self.dryer_communication.main(StatusCommunicator())
+        TimerUpdateController(dryer_status, TIMER_SETTINGS['dryer_status_request']).main()
+        self.set_status_color(dryer_status)
 
     def set_status_color(self, dryer_status):
         if dryer_status:
@@ -163,8 +156,10 @@ class MainLayout(GridLayout):
             self.ids.status.color = [0.96, 0.29, 0.25, 1]
 
     def refresh_part_carrier_list(self, dt):
-        Clock.schedule_interval(self.check_and_update_dryer_status, 5)
-        Clock.schedule_interval(self.part_carrier_list, 5)
+        Clock.schedule_once(self.popup_for_timer_after_devices_off, 1)
+        self.app_start_event = Clock.schedule_interval(self.on_app_start_set_timer, 2)
+        Clock.schedule_interval(self.check_and_update_dryer_status, TIMER_SETTINGS['dryer_status_request'])
+        Clock.schedule_interval(self.part_carrier_list, TIMER_SETTINGS['refresh_drying_list'])
 
     def disable_on_enter_focus(self, instance):
         self.ids.scanner_input.focus = False
@@ -179,6 +174,25 @@ class MainLayout(GridLayout):
         self.on_enter(keyboard_text_instance)
 
     def dryer_stack_lights_switch(self, light_color_model: SerialCommunicationInterface):
+        self.dryer_communication.main(light_color_model)
 
-        result = self.dryer_communication.main(light_color_model)
+    def popup_for_timer_after_devices_off(self, dt):
+
+        if not self.info_popup_ok_button_attribute_1:
+            popup = InfoPopup(
+                auto_dismiss=False,
+                dismiss_button=True,
+                ok_button=True,
+                info='Update timers for carriers after UI device was off?',
+                main_layout=self,
+                alert_message=True
+            )
+            popup.open()
+
+    def on_app_start_set_timer(self, dt):
+        if self.info_popup_ok_button_attribute_1:
+            TimerUpdateController(False, int(self.last_action_interval)).main()
+            self.on_dismiss_refresh_main()
+            self.info_popup_ok_button_attribute_1 = False
+            self.app_start_event.cancel()
 

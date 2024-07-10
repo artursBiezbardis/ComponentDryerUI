@@ -1,7 +1,8 @@
 from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, Boolean, Interval
 from database import Base
-# from sqlalchemy.orm import sessionmaker
-#
+from sqlalchemy.orm import sessionmaker
+
+
 
 
 class MslData(Base):
@@ -39,8 +40,14 @@ class TaskData(Base):
     drying_finished = Column(Boolean)
 
 
+class ActivityRegister(Base):
+    __tablename__ = 'activity_register'
+    id = Column(Integer, primary_key=True, unique=True)
+    time = Column(DateTime)
+
 #engine = create_engine('sqlite:///../database.db')
-#Base.metadata.create_all(engine)
+
+# Base.metadata.create_all(engine)
 #
 # # Create a session
-#Session = sessionmaker(bind=engine)
+# Session = sessionmaker(bind=engine)

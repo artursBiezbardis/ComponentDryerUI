@@ -4,8 +4,8 @@ from interfaces.serialCommunicationInterface import SerialCommunicationInterface
 
 class DryerCommunicationsController:
 
-    def __init__(self):
-        self.dryer_communication = SerialManager()
+    def __init__(self, layout):
+        self.dryer_communication = SerialManager(layout)
         self.serial_queue = False
 
     def main(self, communication_model: SerialCommunicationInterface):

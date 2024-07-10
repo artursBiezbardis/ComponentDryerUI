@@ -17,7 +17,7 @@ class TaskDataRepository:
                             msl=task_template['msl'],
                             hours_less_72_hours=task_template['hours_less_72_hours'],
                             hours_greater_than_72=task_template['hours_greater_than_72'],
-                            drying_start_interval=float(task_template['drying_start_interval'])*3600,
+                            drying_start_interval=float(task_template['drying_start_interval']) * 3600,
                             add_interval='0',
                             drying_finished=task_template['drying_finished'],
                             start_time=datetime.now(),
@@ -48,3 +48,27 @@ class TaskDataRepository:
         if task:
             task.add_interval = add_interval
             self.session.commit()
+
+    def get_all_part_msl_data(self, part_name):
+
+        task_results = self.session.query(TaskData).filter(TaskData.part_name == part_name).all()
+        unique_results = self._apply_unique_strategy(task_results)
+        return unique_results
+
+    def _apply_unique_strategy(self, results):
+        seen = set()
+        unique_results = []
+        for row in results:
+            identifier = (
+                row.thickness,
+                row.msl,
+                row.hours_less_72_hours,
+                row.hours_greater_than_72,
+                row.drying_start_interval,
+                row.msl
+            )
+            if identifier not in seen:
+                seen.add(identifier)
+                unique_results.append(row)
+
+        return unique_results

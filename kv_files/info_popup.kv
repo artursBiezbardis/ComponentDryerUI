@@ -40,3 +40,25 @@
                     Rectangle:
                         pos: self.pos
                         size: self.size
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_x: 1
+            size_hint_y: None
+            height: 50
+            cols: 1
+
+            Button:
+                id: ok_button
+                text: 'ok'
+                on_press:
+                    root.dismiss();
+                    root.main_layout.on_dismiss_refresh_main();
+                    root.on_press_ok();
+
+
+            Button:
+                id: dismiss_button
+                text: 'dismiss'
+                on_press:
+                    root.dismiss();
+                    root.main_layout.on_dismiss_refresh_main();

@@ -1,0 +1,52 @@
+<PartMslItem>:
+    col: 1
+    size_hint_y: None
+    height: 40
+    orientation: 'horizontal'
+    canvas.after:
+        Color:
+            rgba: 0.12, 0.12, 0.13, 1
+        Line:
+            points: [self.x, self.y, self.right, self.y]  # Horizontal line at the bottom
+            width: 1
+
+    Label:
+        id: thickness
+        text: root.get_thickness()
+        size_hint_x: 0.3
+        canvas.before:
+            Color:
+                rgba: 0.12, 0.12, 0.13, 1
+            Rectangle:
+                pos: self.right - 0.5, self.y  # Adjust '5' to change the border width
+                size: 0.5, self.height
+
+    Label:
+        text: root.get_msl()
+        size_hint_x: 0.3
+        canvas.before:
+            Color:
+                rgba: 0.12, 0.12, 0.13, 1
+            Rectangle:
+                pos: self.right - 0.5, self.y  # Adjust '5' to change the border width
+                size: 0.5, self.height
+    Label:
+        text: root.get_hours_grater_or_less()
+        size_hint_x: 0.3
+        canvas.before:
+            Color:
+                rgba: 0.12, 0.12, 0.13, 1
+            Rectangle:
+                pos: self.right - 0.5, self.y
+                size: 0.5, self.height
+
+    Label:
+        id: drying_start_interval
+        text: root.get_drying_start_interval()
+        size_hint_x: 0.3
+
+
+    Button:
+        text: 'Set'
+        size_hint_x: 0.2
+        on_press: root.set_to_form()
