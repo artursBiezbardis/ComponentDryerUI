@@ -11,13 +11,15 @@ class DryerCommunicationsController:
     def main(self, communication_model: SerialCommunicationInterface):
         while self.serial_queue:
             pass
+
+
         self.serial_queue = True
-        communication_model.request_data(self)
-        result = communication_model.receive_data(self)
         connection = self.dryer_communication.connection
         connection.flush()
         connection.reset_input_buffer()
         connection.reset_output_buffer()
+        communication_model.request_data(self)
+        result = communication_model.receive_data(self)
         self.serial_queue = False
 
         return result

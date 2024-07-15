@@ -4,4 +4,5 @@ from services.drying_list_services.updateCarrierListFromDBService import UpdateC
 class UpdateCarrierListFromDBController:
 
     def main(self):
+
         return UpdateCarrierListFromDBService().main()

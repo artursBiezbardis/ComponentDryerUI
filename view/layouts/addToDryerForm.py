@@ -17,7 +17,7 @@ class AddToDryerForm(Popup):
         self.main_layout.ids.scanner_input.readonly = True
         self.main_layout.ids.scanner_input.focus = False
         self.ids.submit_interval.focus = True
-        self.main_layout.add_carrier['add_status'] = False
+        self.main_layout.add_remove_carrier['add_status'] = False
         self.msl_sets_for_part = self.collect_msl_sets()
         self.msl_list()
         self.selected_item_set = {}

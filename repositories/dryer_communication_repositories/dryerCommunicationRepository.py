@@ -2,6 +2,7 @@ import serial
 from config import SERIAL_SETTINGS
 import time
 
+
 class SerialManager:
     def __init__(self, layout):
         self.port = SERIAL_SETTINGS['port']
@@ -11,7 +12,6 @@ class SerialManager:
         self.connection_active = False
         self.layout = layout
         self.connection = self.connecting()
-
 
     def disconnect(self):
         if self.connection:

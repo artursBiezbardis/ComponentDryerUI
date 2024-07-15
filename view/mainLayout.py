@@ -20,7 +20,6 @@ from controllers.timer_update_controllers.deviceOffIntervalController import Dev
 from controllers.timer_update_controllers.timerUpdateController import TimerUpdateController
 
 
-
 class MainLayout(GridLayout):
     popup = ObjectProperty(None)
     add_part_name_popup = ObjectProperty(None)
@@ -31,7 +30,10 @@ class MainLayout(GridLayout):
                           'add_status': False,
                           'remove_status': False,
                           'status_message': '',
-                          'alert_message': False
+                          'alert_message': False,
+                          'message_dismiss_button': False,
+                          'message_ok_button': False,
+                          'on_enter_recycle': False
                           }
 
     def __init__(self, **kwargs):
@@ -43,13 +45,16 @@ class MainLayout(GridLayout):
         self.app_start_event = None
         self.last_action_interval = DeviceOffIntervalController().main()
         self.drying_carrier_collection = {}
-        self.add_carrier = self.ADD_REMOVE_CARRIER.copy()
+        self.add_remove_carrier = self.ADD_REMOVE_CARRIER.copy()
         self.item_data_template = ITEM_DATA_TEMPLATE.copy()
         self.focus_text_input(self)
         self.update_drying_carrier_collection()
         self.part_carrier_list(self)
         self.refresh_part_carrier_list(self)
         self.dryer_communication = DryerCommunicationsController(self)
+        self.dryer_status = self.dryer_communication.main(StatusCommunicator())
+        self.set_status_color(self.dryer_status)
+        self.popups = []
 
     def update_drying_carrier_collection(self):
         self.drying_carrier_collection = UpdateCarrierListFromDBController().main()
@@ -72,13 +77,13 @@ class MainLayout(GridLayout):
 
         barcode: str = instance.text
         instance.text = ''
-        self.add_carrier = addCarrier.AddRemoveCarrierController(self.add_carrier,
+        self.add_remove_carrier = addCarrier.AddRemoveCarrierController(self.add_remove_carrier,
                                                                  self.drying_carrier_collection,
                                                                  barcode).main()
-        self.item_data_template = createItem.CreateDryingItemController(self.add_carrier, self.item_data_template).main()
+        self.item_data_template = createItem.CreateDryingItemController(self.add_remove_carrier, self.item_data_template).main()
         self.set_custom_part_popup()
         self.open_set_timer_form_popup()
-        self.show_info_popup(self.add_carrier)
+        self.show_info_popup(self.add_remove_carrier)
         self.reset_after_removing_item()
         self.update_drying_carrier_collection()
         self.part_carrier_list(self)
@@ -91,6 +96,7 @@ class MainLayout(GridLayout):
     def open_set_timer_form_popup(self):
         if self.item_data_template['part_name'] and not self.item_data_template['popup_opened']:
             self.popup = AddToDryerForm(item_data_template=self.item_data_template, main_layout=self, auto_dismiss=False)
+            self.popups.append(self.popup)
             self.popup.main_layout = self
             self.item_data_template['popup_opened'] = True
             self.popup.open()
@@ -99,14 +105,30 @@ class MainLayout(GridLayout):
         self.drying_carrier_collection = UpdateCarrierListFromDBController().main()
         self.update_drying_carrier_collection()
         self.part_carrier_list(self)
-        self.add_carrier = self.ADD_REMOVE_CARRIER.copy()
+        self.add_remove_carrier = self.ADD_REMOVE_CARRIER.copy()
         self.item_data_template = ITEM_DATA_TEMPLATE.copy()
         self.ids.scanner_input.readonly = False
+        self.add_remove_carrier['message_dismiss_button']: False
+        self.add_remove_carrier['message_ok_button']: False
         Clock.schedule_once(self.focus_text_input, 1)
 
+    def on_ok_refresh_main(self):
+        if not self.add_remove_carrier['on_enter_recycle']:
+            self.ids.scanner_input.readonly = False
+            self.add_remove_carrier['message_dismiss_button']: False
+            self.add_remove_carrier['message_ok_button']: False
+            Clock.schedule_once(self.focus_text_input, 1)
+        else:
+            self.add_remove_carrier['message_dismiss_button']: False
+            self.add_remove_carrier['message_ok_button']: False
+            self.ids.scanner_input.text = self.add_remove_carrier['carrier_barcode']
+            self.add_remove_carrier['on_enter_recycle'] = True
+            self.on_enter(self.ids.scanner_input)
+            Clock.schedule_once(self.focus_text_input, 1)
+
     def reset_after_removing_item(self):
-        if self.add_carrier['remove_status']:
-            self.add_carrier = self.ADD_REMOVE_CARRIER.copy()
+        if self.add_remove_carrier['remove_status']:
+            self.add_remove_carrier = self.ADD_REMOVE_CARRIER.copy()
 
     def sort_part_carrier_list_by_timer(self):
 
@@ -124,12 +146,14 @@ class MainLayout(GridLayout):
         return new_collection.copy()
 
     def set_custom_part_popup(self):
-        if not self.item_data_template['part_name'] and self.add_carrier['add_status']:
+        if not self.item_data_template['part_name'] and self.add_remove_carrier['add_status']:
             self.dryer_stack_lights_switch(RedLightCommunicator())
             self.add_part_name_popup = AddValuePopup(value_name='Part Name',
                                                      item_data_template=self.item_data_template,
-                                                     auto_dismiss=False
+                                                     auto_dismiss=False,
+                                                     layout_for_popup=self
                                                      )
+            self.popups.append(self.add_part_name_popup)
             self.add_part_name_popup.layout_for_popup = self
             self.add_part_name_popup.open()
 
@@ -138,16 +162,19 @@ class MainLayout(GridLayout):
             self.info_popup = InfoPopup(info=add_remove_carrier['status_message'],
                                         main_layout=self,
                                         alert_message=add_remove_carrier['alert_message'],
-                                        auto_dismiss=False
+                                        auto_dismiss=False,
+                                        ok_button=add_remove_carrier['message_dismiss_button'],
+                                        dismiss_button=add_remove_carrier['message_ok_button']
                                         )
+            self.popups.append(self.info_popup)
             self.info_popup.open()
 
     def check_and_update_dryer_status(self, dt):
 
         LastAppActivityRegisterController().main()
-        dryer_status = self.dryer_communication.main(StatusCommunicator())
-        TimerUpdateController(dryer_status, TIMER_SETTINGS['dryer_status_request']).main()
-        self.set_status_color(dryer_status)
+        self.dryer_status = self.dryer_communication.main(StatusCommunicator())
+        TimerUpdateController(self.dryer_status, TIMER_SETTINGS['dryer_status_request']).main()
+        self.set_status_color(self.dryer_status)
 
     def set_status_color(self, dryer_status):
         if dryer_status:
@@ -187,6 +214,7 @@ class MainLayout(GridLayout):
                 main_layout=self,
                 alert_message=True
             )
+            self.popups.append(popup)
             popup.open()
 
     def on_app_start_set_timer(self, dt):

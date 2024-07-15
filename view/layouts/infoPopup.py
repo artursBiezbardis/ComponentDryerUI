@@ -49,7 +49,21 @@ class InfoPopup(Popup):
     def on_press_ok(self):
         self.main_layout.info_popup_ok_button_attribute_1 = True
         self.main_layout.info_popup_ok_button_attribute_2 = True
+        self.main_layout.add_remove_carrier['message_dismiss_button'] =False
+        self.main_layout.add_remove_carrier['message_ok_button'] =False
 
     def on_press_dismiss(self):
         self.main_layout.info_popup_dismiss_button_attribute_1 = True
         self.main_layout.info_popup_dismiss_button_attribute_2 = True
+        self.main_layout.add_remove_carrier['message_dismiss_button'] = False
+        self.main_layout.add_remove_carrier['message_ok_button'] = False
+
+    def close_main_layout_popups(self):
+        for popup in self.main_layout.popups:
+            popup.dismiss()
+
+
+    def on_enter_recycle(self):
+
+        self.main_layout.on_enter()
+

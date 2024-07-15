@@ -22,4 +22,8 @@ ADD_REM0VE_CARRIER = {'carrier_barcode': '',
                       'add_status': False,
                       'remove_status': False,
                       'status_message': '',
-                      'alert_message': False}
+                      'alert_message': False,
+                      'message_dismiss_button': False,
+                      'message_ok_button': False,
+                      'on_enter_recycle': False
+                      }

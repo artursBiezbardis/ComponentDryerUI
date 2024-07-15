@@ -3,6 +3,8 @@ from kivy.properties import DictProperty
 from kivy.properties import ObjectProperty
 from kivy.properties import StringProperty
 from view.layouts.keyboardPopup import KeyboardPopup
+import re
+
 
 class AddValuePopup(Popup):
     item_data_template = DictProperty({})
@@ -12,12 +14,17 @@ class AddValuePopup(Popup):
 
     def __init__(self, **kwargs):
         super(AddValuePopup, self).__init__(**kwargs)
+        self.layout_for_popup.ids.scanner_input.readonly = True
+
 
     def refresh_main_layout(self):
         self.layout_for_popup.on_dismiss_refresh_main()
 
     def on_text_change(self):
-        self.ids.ok.disabled = False
+        if not bool(re.match(r"^\s*$", self.ids.text_input.text)):
+            self.ids.ok.disabled = False
+        if bool(re.match(r"^\s*$", self.ids.text_input.text)):
+            self.ids.ok.disabled = True
 
     def submit_value(self):
         self.layout_for_popup.item_data_template['part_name'] = self.ids.text_input.text

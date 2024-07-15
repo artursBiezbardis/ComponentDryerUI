@@ -24,7 +24,7 @@
             orientation: 'horizontal'
             size_hint_x: 1
             size_hint_y: None
-            height: 50
+            height: 300
             cols: 1
             canvas.before:
                 Color:
@@ -34,6 +34,9 @@
                     size: self.size
             Label:
                 text: root.info
+                font_size: '20sp'
+                halign: 'center'
+                valign: 'middle'
                 canvas.before:
                     Color:
                         rgba: root.info_window_color()
@@ -44,7 +47,7 @@
             orientation: 'horizontal'
             size_hint_x: 1
             size_hint_y: None
-            height: 50
+            height: 100
             cols: 1
 
             Button:
@@ -52,7 +55,7 @@
                 text: 'ok'
                 on_press:
                     root.dismiss();
-                    root.main_layout.on_dismiss_refresh_main();
+                    root.main_layout.on_ok_refresh_main()
                     root.on_press_ok();
 
 
@@ -62,3 +65,4 @@
                 on_press:
                     root.dismiss();
                     root.main_layout.on_dismiss_refresh_main();
+                    root.close_main_layout_popups();
