@@ -5,6 +5,7 @@ from view.layouts.addToDryerForm import AddToDryerForm
 from view.layouts.addValuePopup import AddValuePopup
 from view.layouts.infoPopup import InfoPopup
 from view.layouts.keyboardPopup import KeyboardPopup
+from view.layouts.allItemsList import AllItemsList
 import controllers.carrier_controllers.addRemoveCarrierController as addCarrier
 import controllers.carrier_controllers.createDryingItemController as createItem
 from constants import ITEM_DATA_TEMPLATE
@@ -223,4 +224,10 @@ class MainLayout(GridLayout):
             self.on_dismiss_refresh_main()
             self.info_popup_ok_button_attribute_1 = False
             self.app_start_event.cancel()
+
+    def open_all_item_list(self):
+
+        popup = AllItemsList()
+        popup.open()
+
 

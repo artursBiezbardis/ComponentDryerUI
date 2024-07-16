@@ -43,6 +43,9 @@ class TaskDataRepository:
     def get_all_drying_items(self):
         return self.session.query(TaskData).filter(TaskData.in_dryer == True).all()
 
+    def get_all_items(self):
+        return self.session.query(TaskData).all()
+
     def update_add_time(self, carrier_id, add_interval):
         task = self.session.query(TaskData).filter(TaskData.carrier_id == carrier_id, TaskData.in_dryer == True).first()
         if task:

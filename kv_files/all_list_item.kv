@@ -1,7 +1,7 @@
-<BarcodeItem>:
+<AllListItem>:
     col: 1
     size_hint_y: None
-    height: 60
+    height: 50
     orientation: 'horizontal'
     canvas.before:
         Color:
@@ -18,7 +18,7 @@
 
     Label:
         id: carrier_id
-        text: root.barcode_text
+        text: root.item['carrier_barcode']
         size_hint_x: 0.3
         canvas.before:
             Color:
@@ -29,7 +29,7 @@
 
     Label:
         id: part_name
-        text: root.part_text
+        text: root.item['part_name']
         size_hint_x: 0.3
         canvas.before:
             Color:
@@ -39,7 +39,7 @@
                 size: 0.5, self.height
     Label:
         id: location
-        text: root.location
+        text: root.item['carrier_position']
         size_hint_x: 0.3
         canvas.before:
             Color:
@@ -48,7 +48,7 @@
                 pos: self.right - 0.5, self.y  # Adjust '5' to change the border width
                 size: 0.5, self.height
 
-    Label:
-        id: timer
-        text: root.timer_counter()
+    Button:
+        id: view_item
+        text: 'VIEW ITEM'
         size_hint_x: 0.3
