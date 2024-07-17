@@ -1,6 +1,7 @@
 from constants import ITEM_DATA_TEMPLATE
 from database import SessionLocal
 from repositories.sql_lite_repositories.taskDataRepository import TaskDataRepository
+from utilities.timer_utils import TimerUtilities
 
 
 class AllItemsListService:
@@ -29,13 +30,22 @@ class AllItemsListService:
             items_collection[item.carrier_id]['start_time'] = item.start_time
             items_collection[item.carrier_id]['end_time'] = item.end_time
             items_collection[item.carrier_id]['total_time'] = item.total_time
-            items_collection[item.carrier_id]['item_status'] = self.item_color(item)
+            items_collection[item.carrier_id]['status'] = self.item_status(items_collection[item.carrier_id])
 
         db_session.close()
 
         return items_collection
-    
-    def item_color(self, item):
 
-        return 'color'
+    @staticmethod
+    def item_status(item):
+
+        result = TimerUtilities().time_left(item)
+        if result <= 0 and item['in_dryer']:
+            return 'green'
+        elif result >= 0 and item['in_dryer']:
+            return 'grey'
+        elif result >= 0 and not item['in_dryer']:
+            return 'red'
+        elif result <= 0 and not item['in_dryer']:
+            return 'blue'
 

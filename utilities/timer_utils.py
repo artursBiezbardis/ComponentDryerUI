@@ -18,8 +18,11 @@ class TimerUtilities:
         if item['in_dryer']:
             time_now = datetime.strptime(str(datetime.now()), self.dt_format)
         else:
-            time_now = item['end_time']
-        # time_now = datetime.strptime(str(datetime.now()), self.dt_format)
+            if not self.check_datetime_format(str(item['end_time']), self.dt_format):
+                dt = datetime.fromtimestamp(item['end_time'])
+                time_now = datetime.strptime(str(dt.strftime(self.dt_format)), self.dt_format)
+            else:
+                time_now = item['end_time']
         start_time = datetime.strptime(str(item['start_time']), self.dt_format)
         interval_now = time_now - start_time
         interval_now_sec = interval_now.total_seconds()

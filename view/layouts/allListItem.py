@@ -14,19 +14,32 @@ class AllListItem(BoxLayout):
         self.dt_format = "%Y-%m-%d %H:%M:%S.%f"
 
     def set_list_item_color(self):
-        result = TimerUtilities().time_left(self.item)
-        if result <= 0 and self.item['in_dryer']:
-            self.parent_layout.all_items_collection[self.item['carrier_barcode']]['status'] = 'green'
+        if self.item['status'] == 'green':
             return eval('0.34, 0.59, 0.36, 1')
-        elif result >= 0 and self.item['in_dryer']:
-            self.parent_layout.all_items_collection[self.item['carrier_barcode']]['status'] = 'grey'
+
+        elif self.item['status'] == 'grey':
             return eval('0.24, 0.25, 0.25, 1')
-        elif result >= 0 and not self.item['in_dryer']:
-            self.parent_layout.all_items_collection[self.item['carrier_barcode']]['status'] = 'blue'
+
+        elif self.item['status'] == 'red':
             return eval('0.70, 0.04, 0.00, 1')
-        elif result <= 0 and not self.item['in_dryer']:
-            self.parent_layout.all_items_collection[self.item['carrier_barcode']]['status'] = 'red'
+
+        elif self.item['status'] == 'blue':
             return eval('0.16, 0.67, 0.72, 1')
+
+    # def set_list_item_color(self):
+    #     result = TimerUtilities().time_left(self.item)
+    #     if result <= 0 and self.item['in_dryer']:
+    #         self.parent_layout.all_items_collection[self.item['carrier_barcode']]['status'] = 'green'
+    #         return eval('0.34, 0.59, 0.36, 1')
+    #     elif result >= 0 and self.item['in_dryer']:
+    #         self.parent_layout.all_items_collection[self.item['carrier_barcode']]['status'] = 'grey'
+    #         return eval('0.24, 0.25, 0.25, 1')
+    #     elif result >= 0 and not self.item['in_dryer']:
+    #         self.parent_layout.all_items_collection[self.item['carrier_barcode']]['status'] = 'red'
+    #         return eval('0.70, 0.04, 0.00, 1')
+    #     elif result <= 0 and not self.item['in_dryer']:
+    #         self.parent_layout.all_items_collection[self.item['carrier_barcode']]['status'] = 'blue'
+    #         return eval('0.16, 0.67, 0.72, 1')
 
     def calculate_timer_in_sec(self):
         if not self.check_datetime_format(str(self.item['start_time']), self.dt_format):
