@@ -62,9 +62,14 @@
                 size_hint_x: 0.3
                 text: 'Part Name'
 
-            Label:
+            Spinner:
+                id: data_spinner
+                text: 'end_time'
+                values: ['task_id', 'start_time', 'end_time', 'status', 'part_thickness', 'hours_greater_than_72', 'drying_start_interval', 'in_dryer']
                 size_hint_x: 0.3
-                text: 'Location'
+                background_color: 1, 0, 0, 1
+                on_text:
+                    root.part_carrier_list()
 
             Label:
                 size_hint_x: 0.3
@@ -89,4 +94,5 @@
             Button:
                 text: 'Dismiss'
                 on_press:
+                    root.refresh_main_layout()
                     root.dismiss()

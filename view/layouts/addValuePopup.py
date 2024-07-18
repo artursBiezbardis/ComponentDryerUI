@@ -14,7 +14,9 @@ class AddValuePopup(Popup):
 
     def __init__(self, **kwargs):
         super(AddValuePopup, self).__init__(**kwargs)
+        self.layout_for_popup.ids.scanner_input.focus = False
         self.layout_for_popup.ids.scanner_input.readonly = True
+        self.ids.text_input.focus = True
 
 
     def refresh_main_layout(self):

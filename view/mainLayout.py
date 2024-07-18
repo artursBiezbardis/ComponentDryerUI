@@ -40,9 +40,7 @@ class MainLayout(GridLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.info_popup_ok_button_attribute_1 = False
-        self.info_popup_ok_button_attribute_2 = False
         self.info_popup_dismiss_button_attribute_1 = False
-        self.info_popup_dismiss_button_attribute_2 = False
         self.app_start_event = None
         self.last_action_interval = DeviceOffIntervalController().main()
         self.drying_carrier_collection = {}
@@ -226,8 +224,7 @@ class MainLayout(GridLayout):
             self.app_start_event.cancel()
 
     def open_all_item_list(self):
-
-        popup = AllItemsList()
+        popup = AllItemsList(main_layout=self)
         popup.open()
 
 

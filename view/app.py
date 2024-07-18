@@ -20,5 +20,7 @@ class DryerApp(App):
         Builder.load_file('kv_files/part_msl_item.kv')
         Builder.load_file('kv_files/all_items_list.kv')
         Builder.load_file('kv_files/all_list_item.kv')
+        Builder.load_file('kv_files/item_view_popup.kv')
+        Builder.load_file('kv_files/item_view_element.kv')
         Window.clearcolor = (0.12, 0.12, 0.13, 1)
         return MainLayout()

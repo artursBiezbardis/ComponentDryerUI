@@ -4,6 +4,7 @@ from services.all_items_list_service.allItemsListService import AllItemsListServ
 from view.layouts.allListItem import AllListItem
 from datetime import datetime
 from view.layouts.keyboardPopup import KeyboardPopup
+from view.layouts.itemViewPopup import ItemViewPopup
 
 
 class AllItemsList(Popup):
@@ -89,6 +90,19 @@ class AllItemsList(Popup):
         self.part_carrier_list()
         self.find = text
 
+    def find_items_on_remove(self):
+        text = self.ids.find.text
+        items_found = {}
+        collection = self.all_items_collection
+        for key, item in collection.items():
+            for name, value in item.items():
+                if value:
+                    if str(text).lower() in str(value).lower():
+                        items_found[key] = item
+                        break
+        self.all_items_collection = items_found
+        self.part_carrier_list()
+        self.find = text
 
     def open_key_board(self):
         key_board = KeyboardPopup(layout_for_keyboard=self)
@@ -96,3 +110,12 @@ class AllItemsList(Popup):
 
     def enter_keyboard_text(self, keyboard_text_instance):
         self.ids.find.text = keyboard_text_instance.text
+
+    def open_data_view(self, item_data):
+
+        popup = ItemViewPopup(main_layout=self, item_data=item_data)
+        popup.open()
+
+    def refresh_layout(self):
+        self.all_items_collection = self.get_items_collection()
+        self.part_carrier_list()

@@ -1,0 +1,30 @@
+<ItemViewElement>:
+    col: 2
+    size_hint_y: None
+    height: 50
+    orientation: 'horizontal'
+    canvas.before:
+        Color:
+            rgba: 0.12, 0.12, 0.13, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    canvas.after:
+        Color:
+            rgba: 0.12, 0.12, 0.13, 1
+        Line:
+            points: [self.x, self.y, self.right, self.y]
+            width: 1
+
+    GridLayout:
+        cols:1
+        Label:
+            text: root.element_name + ':  ' + root.element_value
+            size_hint_x: 0.3
+            canvas.before:
+                Color:
+                    rgba: 0.12, 0.12, 0.13, 1
+                Rectangle:
+                    pos: self.right - 0.5, self.y
+                    size: 0.5, self.height
+

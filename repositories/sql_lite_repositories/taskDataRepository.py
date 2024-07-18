@@ -58,6 +58,11 @@ class TaskDataRepository:
         unique_results = self._apply_unique_strategy(task_results)
         return unique_results
 
+    def delete_task_by_id(self, task_id: int):
+        task_to_delete = self.session.query(TaskData).get(task_id)
+        self.session.delete(task_to_delete)
+        self.session.commit()
+
     def _apply_unique_strategy(self, results):
         seen = set()
         unique_results = []

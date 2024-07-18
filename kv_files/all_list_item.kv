@@ -38,8 +38,8 @@
                 pos: self.right - 0.5, self.y  # Adjust '5' to change the border width
                 size: 0.5, self.height
     Label:
-        id: location
-        text: root.item['carrier_position']
+        id: data_spinner
+        text: root.set_data_spinner()
         size_hint_x: 0.3
         canvas.before:
             Color:
@@ -49,6 +49,7 @@
                 size: 0.5, self.height
 
     Button:
-        id: view_item
-        text: 'VIEW ITEM'
+        text: 'VIEW DATA'
         size_hint_x: 0.3
+        on_press:
+            root.open_view()

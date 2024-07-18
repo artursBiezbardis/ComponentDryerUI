@@ -1,0 +1,41 @@
+<ItemViewPopup>:
+    cols:1
+    title: 'List'
+    size: root.size
+    BoxLayout:
+        cols: 1
+        size: root.size
+        orientation: 'vertical'
+        size_hint_x: None
+        canvas.before:
+            Color:
+                rgba: 0.15, 0.15, 0.15, 1
+            Rectangle:
+                pos: root.pos
+                size: root.size
+        BoxLayout:
+            size_hint_y: 1
+
+
+            GridLayout:
+                id: scroll_box
+                cols: 2
+                size_hint_y: None
+                height: self.minimum_height
+        BoxLayout:
+            cols: 1
+            orientation: 'vertical'
+            size_hint_y: 0.1
+            size_hint_x: 0.2
+            padding: [0, 10, 0, 0]
+            Button:
+                text: 'Dismiss'
+                on_press:
+                    root.dismiss()
+            Button:
+                text: 'REMOVE Item'
+                on_press:
+                    root.remove_item()
+                    root.main_layout.refresh_layout()
+                    root.main_layout.find_items_on_remove()
+                    root.dismiss()

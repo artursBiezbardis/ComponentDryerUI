@@ -5,6 +5,7 @@ class TimerUtilities:
     def __init__(self):
 
         self.dt_format = "%Y-%m-%d %H:%M:%S.%f"
+
     def check_db_item_finished(self, item):
         result = self.time_left_db(item)
         if result <= 0:
@@ -30,7 +31,6 @@ class TimerUtilities:
 
         return total_interval_sec - interval_now_sec
 
-
     def time_left_db(self,item):
         time_now = datetime.strptime(str(datetime.now()), self.dt_format)
         start_time = datetime.strptime(str(item.start_time), self.dt_format)
@@ -39,7 +39,6 @@ class TimerUtilities:
         total_interval_sec = (int(item.drying_start_interval) + int(item.add_interval))
 
         return total_interval_sec - interval_now_sec
-
 
     def calculate_interval(self,last_activity_date_time):
         time_now = datetime.strptime(str(datetime.now()), self.dt_format)
