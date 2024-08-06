@@ -209,7 +209,7 @@ class MainLayout(GridLayout):
                 auto_dismiss=False,
                 dismiss_button=True,
                 ok_button=True,
-                info='Update timers for carriers after UI device was off?',
+                info='Update timers for carrier,\n after UI device was off?',
                 main_layout=self,
                 alert_message=True
             )

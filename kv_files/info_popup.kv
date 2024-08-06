@@ -5,7 +5,7 @@
     cols:1
     title: 'INFO'
     size_hint: None, None
-    size: Window.width / 2, Window.height / 2
+    size: Window.width / 1.5, Window.height / 2
     canvas.before:
         Color:
             rgba: root.info_window_color()
@@ -23,8 +23,9 @@
         BoxLayout:
             orientation: 'horizontal'
             size_hint_x: 1
-            size_hint_y: None
-            height: 300
+            size_hint_y: 1
+            height: root.height / 3
+            width: root.width / 1.5
             cols: 1
             canvas.before:
                 Color:
@@ -34,7 +35,7 @@
                     size: self.size
             Label:
                 text: root.info
-                font_size: '20sp'
+                font_size: '17sp'
                 halign: 'center'
                 valign: 'middle'
                 canvas.before:
@@ -47,7 +48,7 @@
             orientation: 'horizontal'
             size_hint_x: 1
             size_hint_y: None
-            height: 100
+            #height: 100
             cols: 1
 
             Button:

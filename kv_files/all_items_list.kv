@@ -16,14 +16,17 @@
         GridLayout:
             size_hint_x: 0.3
             size_hint_y: None
-            height: 30
+            height: 60
+            padding: [0,0,0,30]
             cols: 8
             Label:
+                size_hint_x: None
                 text: 'sort by:'
                 width:100
             Button:
                 id: revers_sort
-                size_hint_x: 0.5
+                size_hint_x: None
+                width: 30
                 text: '\u25B2'
                 font_name: 'DejaVuSans.ttf'
                 on_press:
@@ -33,19 +36,22 @@
                 id: sort_by
                 text: 'task_id'
                 values: [ 'task_id', 'start_time', 'end_time', 'part_name', 'carrier_barcode', 'status']
-                width: 100
+                size_hint_x: None
+                width: 110
                 height: 30
-                #on_press:
                 on_text:
                     root.sort_by = self.text
                     root.part_carrier_list()
             Label:
                 text: 'find:'
+                size_hint_x: None
                 width: 100
             TextInput:
                 id: find
                 multiline: False
                 hint_text: 'double tap for key board'
+                size_hint_x: None
+                width: 200
                 on_double_tap: root.open_key_board()
 
         GridLayout:
