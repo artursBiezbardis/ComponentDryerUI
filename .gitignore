@@ -57,3 +57,6 @@ bin/*
 lib/*
 lib64
 start_main.sh
+config.py
+.gitignore
+database.db
