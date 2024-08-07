@@ -1,0 +1,62 @@
+# Byte-compiled / optimized Python files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Local development files
+.idea/
+*.iml
+.vscode/
+.vs/
+
+# Dependency directories
+venv/
+env/
+env3/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+.venv.bak/
+# If using poetry for dependency management
+/.venv
+.poetry
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+db.sqlite3
+media/
+staticfiles/
+
+# Configuration files
+*.ini
+*.cfg
+*.conf
+.env
+
+# macOS files
+.DS_Store
+
+# Windows thumbnail cache files
+Thumbs.db
+
+# Editor-specific files
+*.sublime-project
+*.sublime-workspace
+*.komodoproject
+.komodotools/
+*.komodotools
+.kate-swp/
+/scripts/
+/alembic/
+
+bin/*
+lib/*
+lib64
+start_main.sh
+config.py
+.gitignore
+database.db
