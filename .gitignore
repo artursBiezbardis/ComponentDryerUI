@@ -59,4 +59,5 @@ lib64
 start_main.sh
 config.py
 .gitignore
-database.db
+databasi.db
+
