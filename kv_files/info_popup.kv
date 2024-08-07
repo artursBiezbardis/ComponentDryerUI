@@ -6,54 +6,51 @@
     title: 'INFO'
     size_hint: None, None
     size: Window.width / 1.5, Window.height / 2
-    canvas.before:
-        Color:
-            rgba: root.info_window_color()
-        Rectangle:
-            pos: self.pos
-            size: self.size
+
     GridLayout:
         cols: 1
         canvas.before:
             Color:
                 rgba: root.info_window_color()
             Rectangle:
-                pos: self.pos
-                size: self.size
+                pos: root.pos
+                size: root.size
         BoxLayout:
             orientation: 'horizontal'
             size_hint_x: 1
-            size_hint_y: 1
-            height: root.height / 3
+            size_hint_y: None
+            height: root.height / 2
             width: root.width / 1.5
             cols: 1
             canvas.before:
                 Color:
                     rgba: root.info_window_color()
                 Rectangle:
-                    pos: self.pos
-                    size: self.size
+                    pos: root.pos
+                    size: root.size
             Label:
                 text: root.info
                 font_size: '17sp'
-                halign: 'center'
                 valign: 'middle'
+                pos_hint: {'x': 0, 'y': 0.3}
                 canvas.before:
                     Color:
                         rgba: root.info_window_color()
                     Rectangle:
-                        pos: self.pos
-                        size: self.size
+                        pos: root.pos
+                        size: root.size
         BoxLayout:
             orientation: 'horizontal'
             size_hint_x: 1
             size_hint_y: None
-            #height: 100
+            height: root.height / 3
             cols: 1
 
             Button:
                 id: ok_button
                 text: 'ok'
+                pos_hint: {'x': 0, 'y': 0.3}
+                #pos: self.pos[0] + 50, self.pos[1] + 50
                 on_press:
                     root.dismiss();
                     root.main_layout.on_ok_refresh_main()
@@ -63,6 +60,7 @@
             Button:
                 id: dismiss_button
                 text: 'dismiss'
+                pos_hint: {'x': 0, 'y': 0.3}
                 on_press:
                     root.dismiss();
                     root.main_layout.on_dismiss_refresh_main();

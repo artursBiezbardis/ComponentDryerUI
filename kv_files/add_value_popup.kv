@@ -5,32 +5,39 @@
     cols:1
     title: 'Add custom ' + root.value_name
     size_hint: None, None
-    size: Window.width / 3, Window.height / 2.8
+    size: Window.width / 2.5, Window.height / 2.5
     GridLayout:
         cols: 1
         BoxLayout:
             orientation: 'horizontal'
             size_hint_x: 1
             size_hint_y: None
-            height: 50
-            cols: 8
-
+            height: root.height / 4
+            cols: 2
             Label:
+                size_hint_x: 1
+                size_hint_y: None
+                height: 30
+                pos_hint: {'x': 0, 'y': 0.1}
                 canvas.before:
                     Color:
                         rgba: 0.01, 0.01, 0.13, 1
                     Rectangle:
                         pos: self.right - 0.5, self.y
-                        size: 0.3, self.height
-                text: root.value_name
+                        size: 0.3, self.height / 3
+                text: root.value_name + ' :'
             TextInput:
+                size_hint_x: 1
+                size_hint_y: None
                 id:text_input
+                height: 30
+                pos_hint: {'x': 0, 'y': 0.1}
                 canvas.before:
                     Color:
                         rgba: 0.01, 0.01, 0.13, 1
                     Rectangle:
                         pos: self.right - 0.5, self.y
-                        size: 0.3, self.height
+                        size: 0.3, self.height / 3
                 text: ''
                 multiline: False
                 on_text: root.on_text_change()
@@ -40,9 +47,10 @@
         BoxLayout:
             cols: 1
             orientation: 'horizontal'
-            size_hint_x: 0.5
+            size_hint_x: 1
             size_hint_y: None
-            height: 100
+            height: root.height / 4
+            pos_hint: {'x': 0, 'y': 0.3}
             Button:
                 id: ok
                 text: 'OK'
