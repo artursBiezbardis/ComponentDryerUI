@@ -1,17 +1,23 @@
 import serial
-from config import SERIAL_SETTINGS
+import importlib
+import config
+
 import time
 
 
 class SerialManager:
     def __init__(self, layout):
-        self.port = SERIAL_SETTINGS['port']
-        self.baud_rate = SERIAL_SETTINGS['baud_rate']
-        self.timeout = SERIAL_SETTINGS['timeout']
-        self.status_request_value = SERIAL_SETTINGS['status_request']
+        self.reload_and_update_config()
         self.connection_active = False
         self.layout = layout
         self.connection = self.connecting()
+
+    def reload_and_update_config(self):
+        importlib.reload(config)
+        self.port = config.SERIAL_SETTINGS['port']
+        self.baud_rate = config.SERIAL_SETTINGS['baud_rate']
+        self.timeout = config.SERIAL_SETTINGS['timeout']
+        self.status_request_value = config.SERIAL_SETTINGS['status_request']
 
     def disconnect(self):
         if self.connection:
@@ -35,7 +41,7 @@ class SerialManager:
 
     def connecting(self):
         while not self.connection_active:
-
+            self.reload_and_update_config()
             loop_indicator_count = 0
             connection_loop_indicator = ''
             try:
@@ -60,7 +66,6 @@ class SerialManager:
                 print("Error: " + str(e)+'\n')
                 time.sleep(2)
         return ser
-
 
     @staticmethod
     def connection_info_text_update(loop_indicator_count, connection_loop_indicator):

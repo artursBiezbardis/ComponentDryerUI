@@ -12,7 +12,6 @@ class DryerCommunicationsController:
         while self.serial_queue:
             pass
 
-
         self.serial_queue = True
         connection = self.dryer_communication.connection
         connection.flush()

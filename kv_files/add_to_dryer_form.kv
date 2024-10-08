@@ -152,7 +152,6 @@
             orientation: 'horizontal'
             size_hint_x: 1
             size_hint_y: None
-            height: 150
             cols: 8
             padding: 0,50,0,0
 
@@ -173,6 +172,7 @@
             Button:
                 id: cancel
                 text: 'Cancel'
+                max_height: 150
                 on_press:
                     root.dismiss();
                     root.refresh_main_layout();

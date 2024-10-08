@@ -50,10 +50,17 @@ class MainLayout(GridLayout):
         self.update_drying_carrier_collection()
         self.part_carrier_list(self)
         self.refresh_part_carrier_list(self)
+        self.popups = []
+        self.disconnected_port_info_popup = {}
+        # replace dryer comunicaton class
         self.dryer_communication = DryerCommunicationsController(self)
+        self.dryer_status = False
+        #replace dryer comunicaton main functionalty
         self.dryer_status = self.dryer_communication.main(StatusCommunicator())
         self.set_status_color(self.dryer_status)
-        self.popups = []
+
+
+
 
     def update_drying_carrier_collection(self):
         self.drying_carrier_collection = UpdateCarrierListFromDBController().main()
@@ -172,6 +179,8 @@ class MainLayout(GridLayout):
 
         LastAppActivityRegisterController().main()
         self.dryer_status = self.dryer_communication.main(StatusCommunicator())
+
+        # Create new class and functionality for timer update. timer count is set by moisture level in dryer(check if temparature level is needed to include)
         TimerUpdateController(self.dryer_status, TIMER_SETTINGS['dryer_status_request']).main()
         self.set_status_color(self.dryer_status)
 
@@ -209,7 +218,7 @@ class MainLayout(GridLayout):
                 auto_dismiss=False,
                 dismiss_button=True,
                 ok_button=True,
-                info='Update timers for carrier,\n after UI device was off?',
+                info='Update timers for carrier\'s,\n after UI device was off?',
                 main_layout=self,
                 alert_message=True
             )
@@ -226,5 +235,4 @@ class MainLayout(GridLayout):
     def open_all_item_list(self):
         popup = AllItemsList(main_layout=self)
         popup.open()
-
 
