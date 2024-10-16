@@ -15,6 +15,10 @@ TIMER_SETTINGS = {
     'dryer_status_request': 60
 }
 
+DRYER_ENV_LIMITS = {
+    ''
+}
+
 BARCODE_SETTINGS = {
     'allowed_first_char_carrier_barcode': ['r', 'R'],
     'allowed_count_of_digits_carrier_barcode': 6,

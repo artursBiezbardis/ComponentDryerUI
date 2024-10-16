@@ -12,6 +12,7 @@ from constants import ITEM_DATA_TEMPLATE
 from controllers.drying_list_controllers.updateDryingListController import UpdateCarrierListFromDBController
 from kivy.properties import ObjectProperty
 from controllers.dryer_communications_controllers.dryerCommunicationsController import DryerCommunicationsController
+from controllers.dryer_communications_controllers.xtremeDryerCommunicationsController import XtremeDryerCommunicationsController
 from models.serialComminicatorModels import StatusCommunicator, RedLightCommunicator
 from interfaces.serialCommunicationInterface import SerialCommunicationInterface
 from controllers.last_app_activity_controller.lastAppActivityRegisterController import LastAppActivityRegisterController
@@ -51,16 +52,8 @@ class MainLayout(GridLayout):
         self.part_carrier_list(self)
         self.refresh_part_carrier_list(self)
         self.popups = []
-        self.disconnected_port_info_popup = {}
-        # replace dryer comunicaton class
-        self.dryer_communication = DryerCommunicationsController(self)
         self.dryer_status = False
-        #replace dryer comunicaton main functionalty
-        self.dryer_status = self.dryer_communication.main(StatusCommunicator())
         self.set_status_color(self.dryer_status)
-
-
-
 
     def update_drying_carrier_collection(self):
         self.drying_carrier_collection = UpdateCarrierListFromDBController().main()
@@ -178,9 +171,7 @@ class MainLayout(GridLayout):
     def check_and_update_dryer_status(self, dt):
 
         LastAppActivityRegisterController().main()
-        self.dryer_status = self.dryer_communication.main(StatusCommunicator())
-
-        # Create new class and functionality for timer update. timer count is set by moisture level in dryer(check if temparature level is needed to include)
+        self.dryer_status = XtremeDryerCommunicationsController().main()
         TimerUpdateController(self.dryer_status, TIMER_SETTINGS['dryer_status_request']).main()
         self.set_status_color(self.dryer_status)
 
@@ -235,4 +226,5 @@ class MainLayout(GridLayout):
     def open_all_item_list(self):
         popup = AllItemsList(main_layout=self)
         popup.open()
+
 
