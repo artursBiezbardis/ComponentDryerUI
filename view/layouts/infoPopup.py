@@ -11,6 +11,7 @@ class InfoPopup(Popup):
     time = NumericProperty(2)
     dismiss_button = BooleanProperty(False)
     ok_button = BooleanProperty(False)
+    enable_alarm_schedule = BooleanProperty(False)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -21,10 +22,10 @@ class InfoPopup(Popup):
             self.hide_button(self.ids.ok_button)
             Clock.schedule_once(self.dismiss_time, self.time)
         else:
-            if self.dismiss_button:
-                self.show_button(self.ids.dismiss_button)
-            if self.ok_button:
-                self.show_button(self.ids.ok_button)
+            if not self.dismiss_button:
+                self.hide_button(self.ids.dismiss_button)
+            if not self.ok_button:
+                self.hide_button(self.ids.ok_button)
 
     def dismiss_time(self, dt):
         self.dismiss()
@@ -39,7 +40,7 @@ class InfoPopup(Popup):
         return eval('0.34, 0.59, 0.36, 1')
 
     def hide_button(self, instance):
-        instance.opacity = 0
+        instance.opacity = 1
         instance.disabled = True
 
     def show_button(self, instance):
@@ -51,12 +52,15 @@ class InfoPopup(Popup):
         self.main_layout.info_popup_ok_button_attribute_2 = True
         self.main_layout.add_remove_carrier['message_dismiss_button'] =False
         self.main_layout.add_remove_carrier['message_ok_button'] =False
-
+        if self.enable_alarm_schedule:
+            self.main_layout.alarm = Clock.schedule_interval(self.main_layout.dryer_alarms, 3)
     def on_press_dismiss(self):
         self.main_layout.info_popup_dismiss_button_attribute_1 = True
         self.main_layout.info_popup_dismiss_button_attribute_2 = True
         self.main_layout.add_remove_carrier['message_dismiss_button'] = False
         self.main_layout.add_remove_carrier['message_ok_button'] = False
+        if self.enable_alarm_schedule:
+            self.main_layout.alarm = Clock.schedule_interval(self.main_layout.dryer_alarms, 3)
 
     def close_main_layout_popups(self):
         for popup in self.main_layout.popups:

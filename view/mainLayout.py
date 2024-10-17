@@ -11,15 +11,15 @@ import controllers.carrier_controllers.createDryingItemController as createItem
 from constants import ITEM_DATA_TEMPLATE
 from controllers.drying_list_controllers.updateDryingListController import UpdateCarrierListFromDBController
 from kivy.properties import ObjectProperty
-from controllers.dryer_communications_controllers.dryerCommunicationsController import DryerCommunicationsController
 from controllers.dryer_communications_controllers.xtremeDryerCommunicationsController import XtremeDryerCommunicationsController
-from models.serialComminicatorModels import StatusCommunicator, RedLightCommunicator
+from models.serialComminicatorModels import RedLightCommunicator
 from interfaces.serialCommunicationInterface import SerialCommunicationInterface
 from controllers.last_app_activity_controller.lastAppActivityRegisterController import LastAppActivityRegisterController
 from utilities.timer_utils import TimerUtilities
 from config import TIMER_SETTINGS
 from controllers.timer_update_controllers.deviceOffIntervalController import DeviceOffIntervalController
 from controllers.timer_update_controllers.timerUpdateController import TimerUpdateController
+from controllers.dryer_alarm_controllers.dryerAlarmController import DryerAlarmController
 
 
 class MainLayout(GridLayout):
@@ -146,7 +146,8 @@ class MainLayout(GridLayout):
 
     def set_custom_part_popup(self):
         if not self.item_data_template['part_name'] and self.add_remove_carrier['add_status']:
-            self.dryer_stack_lights_switch(RedLightCommunicator())
+            #replace_light_with_new
+            #self.dryer_stack_lights_switch(RedLightCommunicator())
             self.add_part_name_popup = AddValuePopup(value_name='Part Name',
                                                      item_data_template=self.item_data_template,
                                                      auto_dismiss=False,
@@ -199,9 +200,6 @@ class MainLayout(GridLayout):
     def enter_keyboard_text(self, keyboard_text_instance):
         self.on_enter(keyboard_text_instance)
 
-    def dryer_stack_lights_switch(self, light_color_model: SerialCommunicationInterface):
-        self.dryer_communication.main(light_color_model)
-
     def popup_for_timer_after_devices_off(self, dt):
 
         if not self.info_popup_ok_button_attribute_1:
@@ -211,7 +209,8 @@ class MainLayout(GridLayout):
                 ok_button=True,
                 info='Update timers for carrier\'s,\n after UI device was off?',
                 main_layout=self,
-                alert_message=True
+                alert_message=True,
+                enable_alarm_schedule=True
             )
             self.popups.append(popup)
             popup.open()
@@ -226,5 +225,23 @@ class MainLayout(GridLayout):
     def open_all_item_list(self):
         popup = AllItemsList(main_layout=self)
         popup.open()
+
+
+    def dryer_alarms(self, dt):
+        message = DryerAlarmController().main()
+
+        if message['alert']:
+            self.alarm.cancel()
+            popup = InfoPopup(
+                auto_dismiss=False,
+                dismiss_button=True,
+                info=message['alert_message'],
+                main_layout=self,
+                alert_message=True,
+                enable_alarm_schedule=True
+            )
+            self.popups.append(popup)
+            popup.open()
+        print('alarm!!!')
 
 

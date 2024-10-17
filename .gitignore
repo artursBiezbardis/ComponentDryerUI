@@ -60,4 +60,3 @@ start_main.sh
 config.py
 .gitignore
 database.db
-liveMonitorData.json
