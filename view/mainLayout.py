@@ -1,5 +1,6 @@
 from kivy.uix.gridlayout import GridLayout
 from kivy.clock import Clock
+import config
 import view.layouts.barcodeItem as Carrier
 from view.layouts.addToDryerForm import AddToDryerForm
 from view.layouts.addValuePopup import AddValuePopup
@@ -11,14 +12,13 @@ import controllers.carrier_controllers.createDryingItemController as createItem
 from constants import ITEM_DATA_TEMPLATE
 from controllers.drying_list_controllers.updateDryingListController import UpdateCarrierListFromDBController
 from kivy.properties import ObjectProperty
-from controllers.dryer_communications_controllers.dryerCommunicationsController import DryerCommunicationsController
-from models.serialComminicatorModels import StatusCommunicator, RedLightCommunicator
-from interfaces.serialCommunicationInterface import SerialCommunicationInterface
+from controllers.dryer_communications_controllers.xtremeDryerCommunicationsController import XtremeDryerCommunicationsController
 from controllers.last_app_activity_controller.lastAppActivityRegisterController import LastAppActivityRegisterController
 from utilities.timer_utils import TimerUtilities
 from config import TIMER_SETTINGS
 from controllers.timer_update_controllers.deviceOffIntervalController import DeviceOffIntervalController
 from controllers.timer_update_controllers.timerUpdateController import TimerUpdateController
+from controllers.dryer_alarm_controllers.dryerAlarmController import DryerAlarmController
 
 
 class MainLayout(GridLayout):
@@ -51,16 +51,8 @@ class MainLayout(GridLayout):
         self.part_carrier_list(self)
         self.refresh_part_carrier_list(self)
         self.popups = []
-        self.disconnected_port_info_popup = {}
-        # replace dryer comunicaton class
-        self.dryer_communication = DryerCommunicationsController(self)
         self.dryer_status = False
-        #replace dryer comunicaton main functionalty
-        self.dryer_status = self.dryer_communication.main(StatusCommunicator())
         self.set_status_color(self.dryer_status)
-
-
-
 
     def update_drying_carrier_collection(self):
         self.drying_carrier_collection = UpdateCarrierListFromDBController().main()
@@ -153,11 +145,11 @@ class MainLayout(GridLayout):
 
     def set_custom_part_popup(self):
         if not self.item_data_template['part_name'] and self.add_remove_carrier['add_status']:
-            self.dryer_stack_lights_switch(RedLightCommunicator())
             self.add_part_name_popup = AddValuePopup(value_name='Part Name',
                                                      item_data_template=self.item_data_template,
                                                      auto_dismiss=False,
-                                                     layout_for_popup=self
+                                                     layout_for_popup=self,
+                                                     enable_alarm_schedule=True
                                                      )
             self.popups.append(self.add_part_name_popup)
             self.add_part_name_popup.layout_for_popup = self
@@ -165,12 +157,14 @@ class MainLayout(GridLayout):
 
     def show_info_popup(self, add_remove_carrier):
         if add_remove_carrier['status_message']:
+            self.alarm.cancel()
             self.info_popup = InfoPopup(info=add_remove_carrier['status_message'],
                                         main_layout=self,
                                         alert_message=add_remove_carrier['alert_message'],
                                         auto_dismiss=False,
                                         ok_button=add_remove_carrier['message_dismiss_button'],
-                                        dismiss_button=add_remove_carrier['message_ok_button']
+                                        dismiss_button=add_remove_carrier['message_ok_button'],
+                                        enable_alarm_schedule=True
                                         )
             self.popups.append(self.info_popup)
             self.info_popup.open()
@@ -178,17 +172,15 @@ class MainLayout(GridLayout):
     def check_and_update_dryer_status(self, dt):
 
         LastAppActivityRegisterController().main()
-        self.dryer_status = self.dryer_communication.main(StatusCommunicator())
-
-        # Create new class and functionality for timer update. timer count is set by moisture level in dryer(check if temparature level is needed to include)
+        self.dryer_status = XtremeDryerCommunicationsController().main()
         TimerUpdateController(self.dryer_status, TIMER_SETTINGS['dryer_status_request']).main()
         self.set_status_color(self.dryer_status)
 
     def set_status_color(self, dryer_status):
         if dryer_status:
-            self.ids.status.color = [0.34, 0.59, 0.36, 1]
+            self.ids.status.color = config.COLORS['green_status']
         else:
-            self.ids.status.color = [0.96, 0.29, 0.25, 1]
+            self.ids.status.color = config.COLORS['red_status']
 
     def refresh_part_carrier_list(self, dt):
         Clock.schedule_once(self.popup_for_timer_after_devices_off, 1)
@@ -208,9 +200,6 @@ class MainLayout(GridLayout):
     def enter_keyboard_text(self, keyboard_text_instance):
         self.on_enter(keyboard_text_instance)
 
-    def dryer_stack_lights_switch(self, light_color_model: SerialCommunicationInterface):
-        self.dryer_communication.main(light_color_model)
-
     def popup_for_timer_after_devices_off(self, dt):
 
         if not self.info_popup_ok_button_attribute_1:
@@ -220,7 +209,8 @@ class MainLayout(GridLayout):
                 ok_button=True,
                 info='Update timers for carrier\'s,\n after UI device was off?',
                 main_layout=self,
-                alert_message=True
+                alert_message=True,
+                enable_alarm_schedule=True
             )
             self.popups.append(popup)
             popup.open()
@@ -236,3 +226,20 @@ class MainLayout(GridLayout):
         popup = AllItemsList(main_layout=self)
         popup.open()
 
+
+    def dryer_alarms(self, dt):
+        message = DryerAlarmController().main()
+
+        if message['alert']:
+            self.alarm.cancel()
+            popup = InfoPopup(
+                auto_dismiss=False,
+                dismiss_button=True,
+                info=message['alert_message'],
+                main_layout=self,
+                alert_message=True,
+                enable_alarm_schedule=True
+            )
+            self.popups.append(popup)
+            popup.open()
+        print('alarm')

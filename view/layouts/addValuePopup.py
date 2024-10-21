@@ -3,6 +3,8 @@ from kivy.properties import DictProperty
 from kivy.properties import ObjectProperty
 from kivy.properties import StringProperty
 from view.layouts.keyboardPopup import KeyboardPopup
+from kivy.clock import Clock
+import config
 import re
 
 
@@ -17,7 +19,7 @@ class AddValuePopup(Popup):
         self.layout_for_popup.ids.scanner_input.focus = False
         self.layout_for_popup.ids.scanner_input.readonly = True
         self.ids.text_input.focus = True
-
+        self.connection_timeout = config.CONNECTION_TIMEOUT['']
 
     def refresh_main_layout(self):
         self.layout_for_popup.on_dismiss_refresh_main()
@@ -32,6 +34,7 @@ class AddValuePopup(Popup):
         self.layout_for_popup.item_data_template['part_name'] = self.ids.text_input.text
         self.layout_for_popup.ids.scanner_input.readonly = False
         self.layout_for_popup.open_set_timer_form_popup()
+        self.layout_for_popup.alarm = Clock.schedule_interval(self.layout_for_popup.dryer_alarms, self.connection_timeout)
 
     def open_key_board(self):
         key_board = KeyboardPopup(layout_for_keyboard=self)
