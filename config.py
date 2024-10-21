@@ -12,7 +12,9 @@ SERIAL_SETTINGS = {
 
 TIMER_SETTINGS = {
     'refresh_drying_list': 30,
-    'dryer_status_request': 60
+    'dryer_status_request': 60,
+    'json_read_lower_offset': 2.7,
+    'json_read_higher_offset': 3.1
 }
 
 DRYER_ENV_LIMITS = {
