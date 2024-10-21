@@ -16,7 +16,15 @@ TIMER_SETTINGS = {
 }
 
 DRYER_ENV_LIMITS = {
-    ''
+    'humidity_min': 0.6,
+    'humidity_max': 0.6,
+    'temp_min': 20.0,
+    'temp_max': 20.0,
+}
+
+CONNECTION_TIMEOUT = {
+    'connection_timeout_for_status': 90.0,
+    'connection_timeout_for_alert_message': 3
 }
 
 BARCODE_SETTINGS = {
@@ -28,6 +36,9 @@ BARCODE_SETTINGS = {
     'allowed_first_chars_position_in_dryer': ['l', 'L'],
     'allowed_count_of_chars_position': 3
 
-
 }
 
+COLORS = {
+    'red_status': [0.96, 0.29, 0.25, 1],
+    'green_status': [0.34, 0.59, 0.36, 1]
+}

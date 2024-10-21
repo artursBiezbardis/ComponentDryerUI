@@ -1,5 +1,6 @@
 from kivy.uix.gridlayout import GridLayout
 from kivy.clock import Clock
+import config
 import view.layouts.barcodeItem as Carrier
 from view.layouts.addToDryerForm import AddToDryerForm
 from view.layouts.addValuePopup import AddValuePopup
@@ -12,8 +13,6 @@ from constants import ITEM_DATA_TEMPLATE
 from controllers.drying_list_controllers.updateDryingListController import UpdateCarrierListFromDBController
 from kivy.properties import ObjectProperty
 from controllers.dryer_communications_controllers.xtremeDryerCommunicationsController import XtremeDryerCommunicationsController
-from models.serialComminicatorModels import RedLightCommunicator
-from interfaces.serialCommunicationInterface import SerialCommunicationInterface
 from controllers.last_app_activity_controller.lastAppActivityRegisterController import LastAppActivityRegisterController
 from utilities.timer_utils import TimerUtilities
 from config import TIMER_SETTINGS
@@ -146,12 +145,11 @@ class MainLayout(GridLayout):
 
     def set_custom_part_popup(self):
         if not self.item_data_template['part_name'] and self.add_remove_carrier['add_status']:
-            #replace_light_with_new
-            #self.dryer_stack_lights_switch(RedLightCommunicator())
             self.add_part_name_popup = AddValuePopup(value_name='Part Name',
                                                      item_data_template=self.item_data_template,
                                                      auto_dismiss=False,
-                                                     layout_for_popup=self
+                                                     layout_for_popup=self,
+                                                     enable_alarm_schedule=True
                                                      )
             self.popups.append(self.add_part_name_popup)
             self.add_part_name_popup.layout_for_popup = self
@@ -159,12 +157,14 @@ class MainLayout(GridLayout):
 
     def show_info_popup(self, add_remove_carrier):
         if add_remove_carrier['status_message']:
+            self.alarm.cancel()
             self.info_popup = InfoPopup(info=add_remove_carrier['status_message'],
                                         main_layout=self,
                                         alert_message=add_remove_carrier['alert_message'],
                                         auto_dismiss=False,
                                         ok_button=add_remove_carrier['message_dismiss_button'],
-                                        dismiss_button=add_remove_carrier['message_ok_button']
+                                        dismiss_button=add_remove_carrier['message_ok_button'],
+                                        enable_alarm_schedule=True
                                         )
             self.popups.append(self.info_popup)
             self.info_popup.open()
@@ -178,9 +178,9 @@ class MainLayout(GridLayout):
 
     def set_status_color(self, dryer_status):
         if dryer_status:
-            self.ids.status.color = [0.34, 0.59, 0.36, 1]
+            self.ids.status.color = config.COLORS['green_status']
         else:
-            self.ids.status.color = [0.96, 0.29, 0.25, 1]
+            self.ids.status.color = config.COLORS['red_status']
 
     def refresh_part_carrier_list(self, dt):
         Clock.schedule_once(self.popup_for_timer_after_devices_off, 1)
@@ -242,6 +242,4 @@ class MainLayout(GridLayout):
             )
             self.popups.append(popup)
             popup.open()
-        print('alarm!!!')
-
-
+        print('alarm')

@@ -1,6 +1,7 @@
 from kivy.uix.popup import Popup
 from kivy.properties import DictProperty, ObjectProperty, StringProperty, BooleanProperty, NumericProperty
 from kivy.clock import Clock
+import config
 
 
 class InfoPopup(Popup):
@@ -26,6 +27,7 @@ class InfoPopup(Popup):
                 self.hide_button(self.ids.dismiss_button)
             if not self.ok_button:
                 self.hide_button(self.ids.ok_button)
+        self.connection_timeout = config.CONNECTION_TIMEOUT['connection_timeout_for_alert_message']
 
     def dismiss_time(self, dt):
         self.dismiss()
@@ -53,14 +55,14 @@ class InfoPopup(Popup):
         self.main_layout.add_remove_carrier['message_dismiss_button'] =False
         self.main_layout.add_remove_carrier['message_ok_button'] =False
         if self.enable_alarm_schedule:
-            self.main_layout.alarm = Clock.schedule_interval(self.main_layout.dryer_alarms, 3)
+            self.main_layout.alarm = Clock.schedule_interval(self.main_layout.dryer_alarms, self.connection_timeout)
     def on_press_dismiss(self):
         self.main_layout.info_popup_dismiss_button_attribute_1 = True
         self.main_layout.info_popup_dismiss_button_attribute_2 = True
         self.main_layout.add_remove_carrier['message_dismiss_button'] = False
         self.main_layout.add_remove_carrier['message_ok_button'] = False
         if self.enable_alarm_schedule:
-            self.main_layout.alarm = Clock.schedule_interval(self.main_layout.dryer_alarms, 3)
+            self.main_layout.alarm = Clock.schedule_interval(self.main_layout.dryer_alarms, self.connection_timeout)
 
     def close_main_layout_popups(self):
         for popup in self.main_layout.popups:
