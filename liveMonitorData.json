@@ -1,1 +1,1 @@
-{"set_rh": 0.5, "set_temp": 20.0, "rh_value": 1.69, "temp_value": 38.8, "door1_closed": true, "door2_closed": true, "last_alarm": "LAST ALARM: AL1. DOOR AJAR (LEFT OPEN) ALARM 17.10.2024 11:42:56", "on_line": true, "time": 1729246254.293475}
+{"set_rh": 0.5, "set_temp": 20.0, "rh_value": 0.78, "temp_value": 23.8, "door1_closed": true, "door2_closed": true, "last_alarm": "LAST ALARM: AL2. HUMIDITY LEVEL ALARM 21.10.2024 13:51:25", "on_line": true, "time": 1729516081.640337}
