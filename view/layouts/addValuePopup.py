@@ -2,6 +2,7 @@ from kivy.uix.popup import Popup
 from kivy.properties import DictProperty
 from kivy.properties import ObjectProperty
 from kivy.properties import StringProperty
+from kivy.properties import BooleanProperty
 from view.layouts.keyboardPopup import KeyboardPopup
 from kivy.clock import Clock
 import config
@@ -13,13 +14,15 @@ class AddValuePopup(Popup):
     layout_for_popup = ObjectProperty(None)
     value_name = StringProperty(None)
     user_input = StringProperty('')
+    enable_alarm_schedule = BooleanProperty(False)
 
     def __init__(self, **kwargs):
-        super(AddValuePopup, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.layout_for_popup.ids.scanner_input.focus = False
         self.layout_for_popup.ids.scanner_input.readonly = True
         self.ids.text_input.focus = True
-        self.connection_timeout = config.CONNECTION_TIMEOUT['']
+        self.connection_timeout = config.CONNECTION_TIMEOUT['connection_timeout_for_alert_message']
+        # self.layout_for_popup.alarm.diasabled()
 
     def refresh_main_layout(self):
         self.layout_for_popup.on_dismiss_refresh_main()
