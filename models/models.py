@@ -1,11 +1,9 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, Boolean, Interval
-from database import Base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean
+from sqlalchemy.orm import declarative_base
 
+declarative_base()
 
-
-
-class MslData(Base):
+class MslData(declarative_base()):
     __tablename__ = 'msl_data'
     id = Column(Integer, primary_key=True, unique=True)
     thickness_level = Column(String)
@@ -14,14 +12,14 @@ class MslData(Base):
     hours_less_than_72 = Column(Float)
 
 
-class CarrierData(Base):
+class CarrierData(declarative_base()):
     __tablename__ = 'carrier_data'
     id = Column(Integer, primary_key=True, unique=True)
     carrier_id = Column(String, unique=True)
     part_name = Column(String)
 
 
-class TaskData(Base):
+class TaskData(declarative_base()):
     __tablename__ = 'task_data'
     id = Column(Integer, primary_key=True, unique=True)
     carrier_id = Column(String)
@@ -40,14 +38,7 @@ class TaskData(Base):
     drying_finished = Column(Boolean)
 
 
-class ActivityRegister(Base):
+class ActivityRegister(declarative_base()):
     __tablename__ = 'activity_register'
     id = Column(Integer, primary_key=True, unique=True)
     time = Column(DateTime)
-
-#engine = create_engine('sqlite:///../database.db')
-
-# Base.metadata.create_all(engine)
-#
-# # Create a session
-# Session = sessionmaker(bind=engine)
