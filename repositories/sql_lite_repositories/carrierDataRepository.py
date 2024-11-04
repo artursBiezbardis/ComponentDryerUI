@@ -1,26 +1,27 @@
-from sqlalchemy.orm import Session
 from models.models import CarrierData
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 
 
 class CarrierDataRepository:
-    def __init__(self, db_session: Session):
+    def __init__(self, db_session: AsyncSession):
         self.session = db_session
 
-    def check_carrier_exist(self, barcode: str) -> bool:
+    async def check_carrier_exist(self, barcode: str) -> bool:
         db_barcode = barcode
         db_barcode = db_barcode[1:]
         result = False
-        data = self.session.query(CarrierData).filter(CarrierData.carrier_id == db_barcode).first()
-        self.session.close()
-        if data:
+        data = await self.session.execute(select(CarrierData).filter(CarrierData.carrier_id == db_barcode))
+        data_val = data.scalars().first()
+        if data_val:
             result = True
         return result
 
-    def get_carrier_data(self, barcode: str):
+    async def get_carrier_data(self, barcode: str):
         db_barcode = barcode
         db_barcode = db_barcode[1:]
-        data = self.session.query(CarrierData).filter(CarrierData.carrier_id == db_barcode).first()
-        self.session.close_all()
-        if not data:
+        data = await self.session.execute(select(CarrierData).filter(CarrierData.carrier_id == db_barcode))
+        data_val = data.scalars().first()
+        if not data_val:
             return {'id': None, 'carrier_id': barcode, 'part_name': None}
-        return {'id': data.id, 'carrier_id': data.carrier_id, 'part_name': data.part_name}
+        return {'id': data_val.id, 'carrier_id': data_val.carrier_id, 'part_name': data_val.part_name}

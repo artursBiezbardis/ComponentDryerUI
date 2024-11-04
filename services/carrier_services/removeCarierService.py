@@ -1,4 +1,4 @@
-from database import SessionLocal
+from database import AsyncSessionLocal
 from repositories.sql_lite_repositories.taskDataRepository import TaskDataRepository
 from constants import ADD_REM0VE_CARRIER
 from utilities.timer_utils import TimerUtilities
@@ -11,7 +11,7 @@ class RemoveCarrierService:
         self.barcode = barcode
         self.drying_carrier_collection = drying_carrier_collection
 
-    def main(self):
+    async def main(self):
         if not self.check_if_carrier_finished() and not self.remove_carrier['on_enter_recycle']:
             self.remove_carrier['add_status'] = False
             self.remove_carrier['remove_status'] = False
@@ -23,14 +23,13 @@ class RemoveCarrierService:
             self.remove_carrier['on_enter_recycle'] = True
             self.remove_carrier['carrier_barcode'] = self.barcode
         else:
-            db_session = SessionLocal()
-            carrier_repo = TaskDataRepository(db_session)
-            carrier_repo.update_finished_task(self.barcode)
-            self.remove_carrier = ADD_REM0VE_CARRIER.copy()
-            self.remove_carrier['status_message'] = 'Carrier ' + self.remove_carrier['carrier_barcode'] + ' removed from Dryer!!'
-            self.set_remove_status()
-            db_session.close()
-            self.remove_carrier['on_enter_recycle'] = False
+            async with AsyncSessionLocal() as db_session:
+                carrier_repo = TaskDataRepository(db_session)
+                await carrier_repo.update_finished_task(self.barcode)
+                self.remove_carrier = ADD_REM0VE_CARRIER.copy()
+                self.remove_carrier['status_message'] = 'Carrier ' + self.remove_carrier['carrier_barcode'] + ' removed from Dryer!!'
+                self.set_remove_status()
+                self.remove_carrier['on_enter_recycle'] = False
 
         return self.remove_carrier
 

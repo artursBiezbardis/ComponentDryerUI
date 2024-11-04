@@ -1,22 +1,19 @@
-from database import SessionLocal
+from database import AsyncSessionLocal
 from repositories.sql_lite_repositories.mslDataRepository import MslDataRepository
 
 
 class MslSelectionValueService:
 
-    def main(self, thickness):
-        db_session = SessionLocal()
-        db_session.close()
-        db_session = SessionLocal()
-        carrier_repo = MslDataRepository(db_session)
-        data = carrier_repo.filter_msl_for_thickness_values(thickness)
-        msl_list = []
+    async def main(self, thickness):
+        async with AsyncSessionLocal() as db_session:
+            carrier_repo = MslDataRepository(db_session)
+            data = await carrier_repo.filter_msl_for_thickness_values(thickness)
+            msl_list = []
 
-        for item in data:
-            if item.hours_less_than_72 > 0.0 or item.hours_greater_than_72 > 0.0:
-                msl_list.append(item.moisture_level)
+            for item in data:
+                if item.hours_less_than_72 > 0.0 or item.hours_greater_than_72 > 0.0:
+                    msl_list.append(item.moisture_level)
 
-        db_session.close()
 
-        return msl_list
+            return msl_list
 

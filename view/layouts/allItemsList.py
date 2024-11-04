@@ -1,6 +1,6 @@
 from kivy.uix.popup import Popup
 from kivy.properties import ObjectProperty
-from services.all_items_list_service.allItemsListService import AllItemsListService
+from controllers.task_data_controllers.allItemsListController import AllItemsListController
 from view.layouts.allListItem import AllListItem
 from datetime import datetime
 from view.layouts.keyboardPopup import KeyboardPopup
@@ -30,7 +30,7 @@ class AllItemsList(Popup):
 
     def get_items_collection(self):
 
-        return AllItemsListService().main()
+        return AllItemsListController().main()
 
     def refresh_main_layout(self):
 

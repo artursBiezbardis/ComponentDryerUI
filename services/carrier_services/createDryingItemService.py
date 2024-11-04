@@ -1,4 +1,4 @@
-from database import SessionLocal
+from database import AsyncSessionLocal
 from repositories.sql_lite_repositories.carrierDataRepository import CarrierDataRepository
 from constants import ITEM_DATA_TEMPLATE
 
@@ -9,12 +9,11 @@ class CreateDryingItemService:
         self.add_carrier = add_carrier
         self.item_template = ITEM_DATA_TEMPLATE.copy()
 
-    def main(self):
+    async def main(self):
 
         self.item_template['carrier_barcode'] = self.add_carrier['carrier_barcode']
         self.item_template['carrier_position'] = self.add_carrier['carrier_position']
-        db_session = SessionLocal()
-        carrier_repo = CarrierDataRepository(db_session)
-        self.item_template['part_name'] = carrier_repo.get_carrier_data(self.add_carrier['carrier_barcode'])['part_name']
-        db_session.close()
+        async with AsyncSessionLocal() as db_session:
+            carrier_repo = CarrierDataRepository(db_session)
+            self.item_template['part_name'] = await carrier_repo.get_carrier_data(self.add_carrier['carrier_barcode'])['part_name']
         return self.item_template

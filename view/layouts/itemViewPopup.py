@@ -1,6 +1,7 @@
 from kivy.uix.popup import Popup
 from kivy.properties import ObjectProperty, DictProperty
 from view.layouts.itemViewElement import ItemViewElement
+from controllers.task_data_controllers.deleteTaskController import DeleteTaskController
 from services.task_data_services.deleteTaskService import DeleteTaskService
 
 
@@ -22,7 +23,6 @@ class ItemViewPopup(Popup):
                 box_layout.add_widget(element)
 
     def remove_item(self):
-
-        DeleteTaskService().main(self.item_data['task_id'])
+        DeleteTaskController().main(self.item_data['task_id'])
 
 

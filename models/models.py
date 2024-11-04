@@ -1,9 +1,9 @@
 from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean
 from sqlalchemy.orm import declarative_base
 
-declarative_base()
+Base = declarative_base()
 
-class MslData(declarative_base()):
+class MslData(Base):
     __tablename__ = 'msl_data'
     id = Column(Integer, primary_key=True, unique=True)
     thickness_level = Column(String)
@@ -12,14 +12,14 @@ class MslData(declarative_base()):
     hours_less_than_72 = Column(Float)
 
 
-class CarrierData(declarative_base()):
+class CarrierData(Base):
     __tablename__ = 'carrier_data'
     id = Column(Integer, primary_key=True, unique=True)
     carrier_id = Column(String, unique=True)
     part_name = Column(String)
 
 
-class TaskData(declarative_base()):
+class TaskData(Base):
     __tablename__ = 'task_data'
     id = Column(Integer, primary_key=True, unique=True)
     carrier_id = Column(String)
@@ -38,7 +38,7 @@ class TaskData(declarative_base()):
     drying_finished = Column(Boolean)
 
 
-class ActivityRegister(declarative_base()):
+class ActivityRegister(Base):
     __tablename__ = 'activity_register'
     id = Column(Integer, primary_key=True, unique=True)
     time = Column(DateTime)

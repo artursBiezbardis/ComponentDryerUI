@@ -1,4 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from models.models import TaskData
 from datetime import datetime
 
@@ -25,13 +26,13 @@ class TaskDataRepository:
 
         self.session.add(new_task)
         await self.session.commit()
-        await self.session.refresh(new_task)
-        task_template['task_id'] = new_task.id
+        #await self.session.refresh(new_task)
+        #task_template['task_id'] = new_task.id
         return task_template
 
     async def update_finished_task(self, barcode):
         task = await self.session.execute(
-            self.session.query(TaskData).filter(TaskData.carrier_id == barcode, TaskData.in_dryer == True)
+            self.session.select(TaskData).filter(TaskData.carrier_id == barcode, TaskData.in_dryer == True)
         )
         task = task.scalar_one_or_none()
         if task:
@@ -41,18 +42,20 @@ class TaskDataRepository:
             await self.session.commit()
 
     async def get_all_drying_items(self):
-        return await self.session.execute(
-            self.session.query(TaskData).filter(TaskData.in_dryer == True)
-        )
+
+        components_in_dryer = select(TaskData).filter(TaskData.in_dryer == True)
+        results = await self.session.execute(components_in_dryer)
+        return results.scalars().all()
 
     async def get_all_items(self):
-        return await self.session.execute(
-            self.session.query(TaskData).all()
-        )
+
+        results = await self.session.execute(
+            select(TaskData))
+        return results.scalars().all()
 
     async def update_add_time(self, carrier_id, add_interval):
         task = await self.session.execute(
-            self.session.query(TaskData).filter(TaskData.carrier_id == carrier_id, TaskData.in_dryer == True)
+            select(TaskData).filter(TaskData.carrier_id == carrier_id, TaskData.in_dryer == True)
         )
         task = task.scalar_one_or_none()
         if task:
@@ -60,6 +63,10 @@ class TaskDataRepository:
             await self.session.commit()
 
     async def delete_task_by_id(self, task_id: int):
-        task_to_delete = await self.session.get(TaskData, task_id)
-        await self.session.delete(task_to_delete)
-        await self.session.commit()
+        stmt = select(TaskData).where(TaskData.id == task_id)
+        result = await self.session.execute(stmt)
+        task_to_delete = result.scalar_one_or_none()
+
+        if task_to_delete:
+            await self.session.delete(task_to_delete)
+            await self.session.commit()

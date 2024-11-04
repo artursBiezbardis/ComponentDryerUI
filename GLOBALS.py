@@ -1,0 +1,1 @@
+global_async_db_queue = []
