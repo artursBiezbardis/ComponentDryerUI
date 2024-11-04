@@ -20,8 +20,9 @@ class MslDataRepository:
 
         return float(result)
 
-    def filter_msl_for_thickness_values(self, value):
+    async def filter_msl_for_thickness_values(self, value):
 
-        data = self.session.query(MslData).filter(MslData.thickness_level == value).all()
+        data = await self.session.execute(select(MslData).filter(MslData.thickness_level == value))
+        data = data.scalars().all()
         return data
 

@@ -14,6 +14,6 @@ class CreateDryingItemService:
         self.item_template['carrier_barcode'] = self.add_carrier['carrier_barcode']
         self.item_template['carrier_position'] = self.add_carrier['carrier_position']
         async with AsyncSessionLocal() as db_session:
-            carrier_repo = CarrierDataRepository(db_session)
-            self.item_template['part_name'] = await carrier_repo.get_carrier_data(self.add_carrier['carrier_barcode'])['part_name']
+            item_template = await CarrierDataRepository(db_session).get_carrier_data(self.add_carrier['carrier_barcode'])
+            self.item_template['part_name'] = item_template['part_name']
         return self.item_template

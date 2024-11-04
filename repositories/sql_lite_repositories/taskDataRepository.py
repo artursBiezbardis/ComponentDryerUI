@@ -62,6 +62,12 @@ class TaskDataRepository:
             task.add_interval = add_interval
             await self.session.commit()
 
+    async def get_all_part_msl_data(self, part_name):
+        task_results = await self.session.execute(select(TaskData).filter(TaskData.part_name == part_name))
+        task_results = task_results.scalars().all()
+        unique_results = self._apply_unique_strategy(task_results)
+        return unique_results
+
     async def delete_task_by_id(self, task_id: int):
         stmt = select(TaskData).where(TaskData.id == task_id)
         result = await self.session.execute(stmt)
@@ -70,3 +76,21 @@ class TaskDataRepository:
         if task_to_delete:
             await self.session.delete(task_to_delete)
             await self.session.commit()
+
+    def _apply_unique_strategy(self, results):
+        seen = set()
+        unique_results = []
+        for row in results:
+            identifier = (
+                row.thickness,
+                row.msl,
+                row.hours_less_72_hours,
+                row.hours_greater_than_72,
+                row.drying_start_interval,
+                row.msl
+            )
+            if identifier not in seen:
+                seen.add(identifier)
+                unique_results.append(row)
+
+        return unique_results
