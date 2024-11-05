@@ -26,8 +26,7 @@ class TaskDataRepository:
 
         self.session.add(new_task)
         await self.session.commit()
-        #await self.session.refresh(new_task)
-        #task_template['task_id'] = new_task.id
+
         return task_template
 
     async def update_finished_task(self, barcode):
