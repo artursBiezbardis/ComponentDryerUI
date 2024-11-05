@@ -56,7 +56,7 @@ class TaskDataRepository:
         task = await self.session.execute(
             select(TaskData).filter(TaskData.carrier_id == carrier_id, TaskData.in_dryer == True)
         )
-        task = task.scalar_one_or_none()
+        task = task.scalar_one()
         if task:
             task.add_interval = add_interval
             await self.session.commit()
@@ -68,8 +68,8 @@ class TaskDataRepository:
         return unique_results
 
     async def delete_task_by_id(self, task_id: int):
-        stmt = select(TaskData).where(TaskData.id == task_id)
-        result = await self.session.execute(stmt)
+        item = select(TaskData).where(TaskData.id == task_id)
+        result = await self.session.execute(item)
         task_to_delete = result.scalar_one_or_none()
 
         if task_to_delete:
