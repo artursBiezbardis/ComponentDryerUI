@@ -17,4 +17,4 @@ class TimerUpdateService:
                 for item in drying_items:
                     if not TimerUtilities().check_db_item_finished(item):
                         add_interval_value = int(item.add_interval) + self.add_interval_value
-                        await task_repo.update_add_time(item.carrier_id, add_interval_value)
+                        await task_repo.update_add_time(item.id, add_interval_value)
