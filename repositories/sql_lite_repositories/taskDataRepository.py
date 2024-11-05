@@ -31,7 +31,7 @@ class TaskDataRepository:
 
     async def update_finished_task(self, barcode):
         task = await self.session.execute(
-            self.session.select(TaskData).filter(TaskData.carrier_id == barcode, TaskData.in_dryer == True)
+            select(TaskData).filter(TaskData.carrier_id == barcode, TaskData.in_dryer == True)
         )
         task = task.scalar_one_or_none()
         if task:

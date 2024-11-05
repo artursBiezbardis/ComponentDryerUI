@@ -226,10 +226,8 @@ class MainLayout(GridLayout):
         popup = AllItemsList(main_layout=self)
         popup.open()
 
-
     def dryer_alarms(self, dt):
         message = DryerAlarmController().main()
-
         if message['alert']:
             self.alarm.cancel()
             popup = InfoPopup(
@@ -242,4 +240,3 @@ class MainLayout(GridLayout):
             )
             self.popups.append(popup)
             popup.open()
-        print('alarm')

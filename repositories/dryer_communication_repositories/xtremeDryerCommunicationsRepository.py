@@ -13,7 +13,7 @@ class XtremeDryerCommunicationsRepository:
         new_modified_time = os.path.getmtime(expected_path)
         time_now = time.time()
         if config.TIMER_SETTINGS['json_read_lower_offset'] < (time_now - new_modified_time) > config.TIMER_SETTINGS['json_read_higher_offset']:
-            time.sleep(1)
+            time.sleep(1.1)
         try:
             with open(expected_path, 'r') as liveMonitorData:
                 dryer_data_now = json.load(liveMonitorData)

@@ -10,11 +10,16 @@ class LastAppActivityRegisterRepository:
         self.session = db_session
 
     async def update_time_now(self):
-        logging.info("Adding a new time entry")
-        time_entry = ActivityRegister(time=datetime.now())
-        self.session.add(time_entry)
-        await self.session.commit()
-        logging.info("Time entry added and committed")
+        logging.info("Updating time entry with id == 1")
+
+        result = await self.session.execute(
+            select(ActivityRegister).filter(ActivityRegister.id == 1)
+        )
+        time_entry = result.scalars().first()
+
+        if time_entry:
+            time_entry.time = datetime.now()
+            await self.session.commit()
 
     async def get_time(self):
         logging.info("Fetching the last activity time entry")
