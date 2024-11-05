@@ -54,7 +54,7 @@ class TaskDataRepository:
 
     async def update_add_time(self, id, add_interval):
         task = await self.session.execute(
-            select(TaskData).filter(TaskData.carrier_id == id, TaskData.in_dryer == True)
+            select(TaskData).filter(TaskData.id == id, TaskData.in_dryer == True)
         )
         task = task.scalar_one()
         if task:
