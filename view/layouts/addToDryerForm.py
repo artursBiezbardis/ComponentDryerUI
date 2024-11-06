@@ -49,10 +49,13 @@ class AddToDryerForm(Popup):
         start_drying = StartDryingController()
         for key, item in self.item_data_template.items():
             new_item_data_template[key] = item
+        barcode = new_item_data_template['carrier_barcode']
         new_item_data_template['part_thickness'] = self.ids.thickness_level.text
         new_item_data_template['msl'] = self.ids.moisture_level.text
         new_item_data_template[self.create_snake_case_text()] = True
         new_item_data_template['drying_start_interval'] = self.ids.drying_interval.text
+        self.main_layout.last_action_info = f'Carrier {barcode} is added to dryer'
+        self.main_layout.set_last_action_info()
         return start_drying.main(new_item_data_template)
 
     def refresh_main_layout(self):

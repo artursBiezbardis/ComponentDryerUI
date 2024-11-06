@@ -15,6 +15,7 @@ from kivy.properties import ObjectProperty
 from controllers.dryer_communications_controllers.xtremeDryerCommunicationsController import XtremeDryerCommunicationsController
 from controllers.last_app_activity_controller.lastAppActivityRegisterController import LastAppActivityRegisterController
 from utilities.timer_utils import TimerUtilities
+from utilities.format_string_utilities import FormatStringUtilities
 from config import TIMER_SETTINGS
 from controllers.timer_update_controllers.deviceOffIntervalController import DeviceOffIntervalController
 from controllers.timer_update_controllers.timerUpdateController import TimerUpdateController
@@ -51,8 +52,12 @@ class MainLayout(GridLayout):
         self.part_carrier_list(self)
         self.refresh_part_carrier_list(self)
         self.popups = []
-        self.dryer_status = False
+        self.dryer_status_output = {'dryer_status': False, 'dryer_status_info': 'no connection'}
+        self.dryer_status = self.dryer_status_output['dryer_status']
+        self.set_dryer_status_info(self.dryer_status_output['dryer_status_info'])
         self.set_status_color(self.dryer_status)
+        self.last_action_info = 'app start'
+        self.set_last_action_info()
 
     def update_drying_carrier_collection(self):
         self.drying_carrier_collection = UpdateCarrierListFromDBController().main()
@@ -79,6 +84,8 @@ class MainLayout(GridLayout):
                                                                  self.drying_carrier_collection,
                                                                  barcode).main()
         self.item_data_template = createItem.CreateDryingItemController(self.add_remove_carrier, self.item_data_template).main()
+        self.last_action_info = self.add_remove_carrier['status_message']
+        self.set_last_action_info()
         self.set_custom_part_popup()
         self.open_set_timer_form_popup()
         self.show_info_popup(self.add_remove_carrier)
@@ -172,15 +179,29 @@ class MainLayout(GridLayout):
     def check_and_update_dryer_status(self, dt):
 
         LastAppActivityRegisterController().main()
-        self.dryer_status = XtremeDryerCommunicationsController().main()
+        self.dryer_status_output = XtremeDryerCommunicationsController().main()
+        self.dryer_status: bool = self.dryer_status_output['dryer_status']
         TimerUpdateController(self.dryer_status, TIMER_SETTINGS['dryer_status_request']).main()
         self.set_status_color(self.dryer_status)
+        self.set_dryer_status_info(self.dryer_status_output['dryer_status_info'])
 
     def set_status_color(self, dryer_status):
         if dryer_status:
             self.ids.status.color = config.COLORS['green_status']
         else:
             self.ids.status.color = config.COLORS['red_status']
+
+    def set_dryer_status_info(self, dryer_status_info):
+        self.ids.status_text.text = 'Status info:   \n\n'+dryer_status_info
+        if self.dryer_status:
+            self.ids.status_text.color = config.COLORS['green_status']
+        else:
+            self.ids.status_text.color = config.COLORS['red_status']
+
+    def set_last_action_info(self):
+        self.ids.last_action_text.text = 'Last action:   \n\n'+FormatStringUtilities().break_string_in_lines(
+            self.last_action_info, 14)
+        self.ids.last_action_text.color = [0.11, 0.32, 0.49, 1]
 
     def refresh_part_carrier_list(self, dt):
         Clock.schedule_once(self.popup_for_timer_after_devices_off, 1)

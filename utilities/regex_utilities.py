@@ -31,3 +31,5 @@ class RegexUtilities:
         regex_init += "]\\"
         regex_init += "d{"+str(custom_digit_count)+"}$"
         return regex_init
+
+    

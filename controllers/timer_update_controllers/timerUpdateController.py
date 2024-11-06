@@ -5,7 +5,6 @@ import time
 from utilities.async_queue_utilities import AsyncQueueUtilities
 
 
-
 class TimerUpdateController:
 
     def __init__(self, dryer_status: bool, add_interval_value: int):

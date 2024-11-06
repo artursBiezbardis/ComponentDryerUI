@@ -31,6 +31,21 @@
                         text: 'List'
                         on_press: root.open_all_item_list();
 
+                    Label:
+                        text:'\n\n\n\n'
+
+                    Label:
+                        id: status_text
+                        bold: True
+                        text: 'Status info:   \n\nRH to High'
+                    Label:
+                        text:'\n\n\n\n'
+                    Label:
+                        id: last_action_text
+                        bold: True
+                        text: 'Last action:   \n\n'
+
+
                 # Second column in the first row with scrollable content
                 BoxLayout:
                     cols: 1
