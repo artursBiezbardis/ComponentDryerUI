@@ -254,11 +254,12 @@ class MainLayout(GridLayout):
             self.alarm.cancel()
             popup = InfoPopup(
                 auto_dismiss=False,
-                dismiss_button=True,
+                dismiss_button=False,
                 info=message['alert_message'],
                 main_layout=self,
                 alert_message=True,
-                enable_alarm_schedule=True
+                enable_alarm_schedule=True,
+                time=3
             )
             self.popups.append(popup)
             popup.open()
