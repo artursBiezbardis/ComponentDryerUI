@@ -23,6 +23,10 @@ class XtremeDryerCommunicationsService:
             if humidity_min <= humidity <= humidity_max and temp_min <= temp <= temp_max:
                 dryer_status_output['dryer_status_info'] = 'drying active'
                 dryer_status_output['dryer_status'] = True
+            elif not humidity_min <= humidity <= humidity_max and not temp_min <= temp <= temp_max:
+                dryer_status_output['dryer_status_info'] = 'RH and Temperature are out of range'
+            elif humidity_min <= humidity <= humidity_max and not temp_min <= temp <= temp_max:
+                dryer_status_output['dryer_status_info'] = 'Temperature is out of range'
 
         return dryer_status_output
 

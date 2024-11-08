@@ -192,7 +192,8 @@ class MainLayout(GridLayout):
             self.ids.status.color = config.COLORS['red_status']
 
     def set_dryer_status_info(self, dryer_status_info):
-        self.ids.status_text.text = 'Status info:   \n\n'+dryer_status_info
+        self.ids.status_text.text = 'Status info:   \n\n'+FormatStringUtilities().break_string_in_lines(
+            dryer_status_info, 14)
         if self.dryer_status:
             self.ids.status_text.color = config.COLORS['green_status']
         else:
