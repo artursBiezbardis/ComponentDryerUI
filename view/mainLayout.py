@@ -20,6 +20,8 @@ from config import TIMER_SETTINGS
 from controllers.timer_update_controllers.deviceOffIntervalController import DeviceOffIntervalController
 from controllers.timer_update_controllers.timerUpdateController import TimerUpdateController
 from controllers.dryer_alarm_controllers.dryerAlarmController import DryerAlarmController
+from collections import Counter
+
 
 
 class MainLayout(GridLayout):
@@ -93,6 +95,7 @@ class MainLayout(GridLayout):
         self.update_drying_carrier_collection()
         self.part_carrier_list(self)
         self.disable_on_enter_focus(instance)
+
 
     def focus_text_input(self, dt):
         scanner_input = self.ids.scanner_input
@@ -184,6 +187,8 @@ class MainLayout(GridLayout):
         TimerUpdateController(self.dryer_status, TIMER_SETTINGS['dryer_status_request']).main()
         self.set_status_color(self.dryer_status)
         self.set_dryer_status_info(self.dryer_status_output['dryer_status_info'])
+        self.clean_popup_list()
+
 
     def set_status_color(self, dryer_status):
         if dryer_status:
@@ -263,3 +268,9 @@ class MainLayout(GridLayout):
             )
             self.popups.append(popup)
             popup.open()
+
+    def clean_popup_list(self):
+        count = Counter(self.popups).total()
+        if count > 4:
+            self.popups[0].dismiss()
+            self.popups.remove(self.popups[0])

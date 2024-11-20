@@ -12,7 +12,7 @@ class DeviceOffIntervalController:
 
         while glob_var.global_async_db_queue[0] != new_queue[-1]:
 
-            time.sleep(0.1)
+            time.sleep(0.01)
 
         task = asyncio.run(DeviceOffIntervalService().main())
         glob_var.global_async_db_queue.remove(new_queue[-1])
