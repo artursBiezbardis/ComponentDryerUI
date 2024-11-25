@@ -23,7 +23,6 @@ from controllers.dryer_alarm_controllers.dryerAlarmController import DryerAlarmC
 from collections import Counter
 
 
-
 class MainLayout(GridLayout):
     popup = ObjectProperty(None)
     add_part_name_popup = ObjectProperty(None)
@@ -46,11 +45,11 @@ class MainLayout(GridLayout):
         self.info_popup_dismiss_button_attribute_1 = False
         self.app_start_event = None
         self.last_action_interval = DeviceOffIntervalController().main()
+        LastAppActivityRegisterController().main()
         self.drying_carrier_collection = {}
         self.add_remove_carrier = self.ADD_REMOVE_CARRIER.copy()
         self.item_data_template = ITEM_DATA_TEMPLATE.copy()
         self.focus_text_input(self)
-        self.update_drying_carrier_collection()
         self.part_carrier_list(self)
         self.refresh_part_carrier_list(self)
         self.popups = []
@@ -79,7 +78,6 @@ class MainLayout(GridLayout):
                 box_layout.add_widget(drying_item)
 
     def on_enter(self, instance):
-
         barcode: str = instance.text
         instance.text = ''
         self.add_remove_carrier = addCarrier.AddRemoveCarrierController(self.add_remove_carrier,
@@ -95,7 +93,6 @@ class MainLayout(GridLayout):
         self.update_drying_carrier_collection()
         self.part_carrier_list(self)
         self.disable_on_enter_focus(instance)
-
 
     def focus_text_input(self, dt):
         scanner_input = self.ids.scanner_input
@@ -244,7 +241,7 @@ class MainLayout(GridLayout):
 
     def on_app_start_set_timer(self, dt):
         if self.info_popup_ok_button_attribute_1:
-            TimerUpdateController(False, int(self.last_action_interval)).main()
+            TimerUpdateController(False, int(self.last_action_interval), True).main()
             self.on_dismiss_refresh_main()
             self.info_popup_ok_button_attribute_1 = False
             self.app_start_event.cancel()

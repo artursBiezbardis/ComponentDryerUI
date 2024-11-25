@@ -26,8 +26,17 @@ class TaskDataRepository:
 
         self.session.add(new_task)
         await self.session.commit()
-
         return task_template
+
+    async def reset_finished_task(self, item_id):
+        task = await self.session.execute(
+            select(TaskData).filter(TaskData.id == item_id, TaskData.in_dryer == True)
+        )
+        task = task.scalar_one_or_none()
+        if task:
+            task.end_time = None
+            task.drying_finished = False
+            await self.session.commit()
 
     async def update_finished_task(self, barcode):
         task = await self.session.execute(
