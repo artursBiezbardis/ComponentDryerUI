@@ -56,6 +56,7 @@ class InfoPopup(Popup):
         self.main_layout.add_remove_carrier['message_ok_button'] =False
         if self.enable_alarm_schedule:
             self.main_layout.alarm = Clock.schedule_interval(self.main_layout.dryer_alarms, self.connection_timeout)
+
     def on_press_dismiss(self):
         self.main_layout.info_popup_dismiss_button_attribute_1 = True
         self.main_layout.info_popup_dismiss_button_attribute_2 = True
@@ -67,7 +68,6 @@ class InfoPopup(Popup):
     def close_main_layout_popups(self):
         for popup in self.main_layout.popups:
             popup.dismiss()
-
 
     def on_enter_recycle(self):
 

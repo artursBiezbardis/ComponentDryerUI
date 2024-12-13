@@ -1,9 +1,7 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, Boolean, Interval
-from database import Base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean
+from sqlalchemy.orm import declarative_base
 
-
-
+Base = declarative_base()
 
 class MslData(Base):
     __tablename__ = 'msl_data'
@@ -44,10 +42,3 @@ class ActivityRegister(Base):
     __tablename__ = 'activity_register'
     id = Column(Integer, primary_key=True, unique=True)
     time = Column(DateTime)
-
-#engine = create_engine('sqlite:///../database.db')
-
-# Base.metadata.create_all(engine)
-#
-# # Create a session
-# Session = sessionmaker(bind=engine)

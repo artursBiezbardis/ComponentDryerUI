@@ -6,6 +6,7 @@ import config
 class XtremeDryerCommunicationsService:
 
     def main(self):
+        dryer_status_output = {'dryer_status': False, 'dryer_status_info': 'no connection'}
 
         dryer_data_now = XtremeDryerCommunicationsRepository().main()
         humidity = dryer_data_now['rh_value']
@@ -17,13 +18,17 @@ class XtremeDryerCommunicationsService:
         temp_min = set_temp - config.DRYER_ENV_LIMITS['temp_min']
         temp_max = set_temp + config.DRYER_ENV_LIMITS['temp_max']
 
-        result = False
         if self.check_connection_timeout(dryer_data_now['time']) and dryer_data_now['on_line']:
-
+            dryer_status_output['dryer_status_info'] = 'RH is too high'
             if humidity_min <= humidity <= humidity_max and temp_min <= temp <= temp_max:
-                result = True
+                dryer_status_output['dryer_status_info'] = 'drying active'
+                dryer_status_output['dryer_status'] = True
+            elif not humidity_min <= humidity <= humidity_max and not temp_min <= temp <= temp_max:
+                dryer_status_output['dryer_status_info'] = 'RH and Temperature are out of range'
+            elif humidity_min <= humidity <= humidity_max and not temp_min <= temp <= temp_max:
+                dryer_status_output['dryer_status_info'] = 'Temperature is out of range'
 
-        return result
+        return dryer_status_output
 
     @staticmethod
     def check_connection_timeout(live_monitor_data_update_time: float) -> bool:

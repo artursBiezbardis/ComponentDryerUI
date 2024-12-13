@@ -26,7 +26,7 @@ class DryerAlarmService:
     @staticmethod
     def check_connection_timeout(live_monitor_data_update_time: float) -> bool:
 
-        max_connection_timeout = 5
+        max_connection_timeout = 10
         time_now = time.time()
         result = True
         if time_now - live_monitor_data_update_time >= max_connection_timeout:
