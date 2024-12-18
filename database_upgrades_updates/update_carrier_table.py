@@ -1,20 +1,55 @@
 import utilities.CSVAndTSVUtilities as tsv
-from models.models import CarrierData, Session
+from database import AsyncSessionLocal
+from models.models import CarrierData
 
 
-def update_carrier_table(carrier_table_path):
+class UpdateCarrierTable:
 
-    tsv_data = tsv.CSVReader().read_tsv(carrier_table_path)
-    session = Session()
-    del tsv_data[0]
-    for row in tsv_data:
-        if row:
-            new_data = CarrierData(
-                carrier_id=row[0],
-                part_name=row[1],
-            )
-            session.add(new_data)
-    session.commit()
+    async def add_carrier_table_data(self, carrier_table_path: str) -> None:
+        """Updates the carrier table with data from the given TSV file."""
+        async with AsyncSessionLocal() as db_session:
+
+            tsv_data = tsv.CSVReader().read_tsv(carrier_table_path)
+            header, *data_rows = tsv_data
+
+            for row in data_rows:
+                if row:
+                    new_data = CarrierData(
+                        carrier_id=str(row[0]),
+                        part_name=row[1],
+                        quantity=int(row[2]),
+                        time_first_load=str(row[3]),
+                        msl_time=int(row[4]),
+                        pauses_total_time=float(row[5]),
+                        part_height=int(row[7])
+                    )
+                    db_session.add(new_data)
+            await db_session.commit()
+
+    async def update_carrier_table(self, carrier_table_path: str) -> None:
+        """Updates the carrier table with data from the given TSV file."""
+        async with AsyncSessionLocal() as db_session:
+            tsv_data = tsv.CSVReader().read_tsv(carrier_table_path)
+            header, *data_rows = tsv_data
+
+            for row in data_rows:
+                if row:
+                    new_data = CarrierData(
+                        carrier_id=str(row[0]),
+                        part_name=row[1],
+                        quantity=int(row[2]),
+                        time_first_load=str(row[3]),
+                        msl_time=int(row[4]),
+                        pauses_total_time=float(row[5]),
+                        part_height=int(row[7])
+                    )
+                    db_session.add(new_data)
+            await db_session.commit()
 
 
-update_carrier_table('../data/tabula.tsv')
+
+update = UpdateCarrierTable()
+
+
+import asyncio
+asyncio.run(update.update_carrier_table('../data/carrier_data.tsv'))

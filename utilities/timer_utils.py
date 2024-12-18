@@ -40,7 +40,7 @@ class TimerUtilities:
 
         return total_interval_sec - interval_now_sec
 
-    def calculate_interval(self,last_activity_date_time):
+    def calculate_interval(self, last_activity_date_time):
         time_now = datetime.strptime(str(datetime.now()), self.dt_format)
         last_activity = datetime.strptime(str(last_activity_date_time), self.dt_format)
         interval_now = time_now - last_activity

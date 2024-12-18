@@ -9,7 +9,7 @@ from view.layouts.keyboardPopup import KeyboardPopup
 from view.layouts.allItemsList import AllItemsList
 import controllers.carrier_controllers.addRemoveCarrierController as addCarrier
 import controllers.carrier_controllers.createDryingItemController as createItem
-from constants import ITEM_DATA_TEMPLATE
+from constants import ITEM_DATA_TEMPLATE, MSL_EXPIRE
 from controllers.drying_list_controllers.updateDryingListController import UpdateCarrierListFromDBController
 from kivy.properties import ObjectProperty
 from controllers.dryer_communications_controllers.xtremeDryerCommunicationsController import XtremeDryerCommunicationsController
@@ -21,6 +21,9 @@ from controllers.timer_update_controllers.deviceOffIntervalController import Dev
 from controllers.timer_update_controllers.timerUpdateController import TimerUpdateController
 from controllers.dryer_alarm_controllers.dryerAlarmController import DryerAlarmController
 from collections import Counter
+import datetime
+from controllers.carrier_controllers.setDryingIntervalController import SetDryingIntervalController
+from controllers.carrier_controllers.startDryingController import StartDryingController
 
 
 class MainLayout(GridLayout):
@@ -86,6 +89,8 @@ class MainLayout(GridLayout):
         self.item_data_template = createItem.CreateDryingItemController(self.add_remove_carrier, self.item_data_template).main()
         self.last_action_info = self.add_remove_carrier['status_message']
         self.set_last_action_info()
+        self.check_data_to_auto_start()
+        self.auto_start_task()
         self.set_custom_part_popup()
         self.open_set_timer_form_popup()
         self.show_info_popup(self.add_remove_carrier)
@@ -99,7 +104,7 @@ class MainLayout(GridLayout):
         scanner_input.focus = True
 
     def open_set_timer_form_popup(self):
-        if self.item_data_template['part_name'] and not self.item_data_template['popup_opened']:
+        if self.item_data_template['part_name'] and not self.item_data_template['popup_opened'] and not self.item_data_template['auto_add_task']:
             self.popup = AddToDryerForm(item_data_template=self.item_data_template, main_layout=self, auto_dismiss=False)
             self.popups.append(self.popup)
             self.popup.main_layout = self
@@ -271,3 +276,57 @@ class MainLayout(GridLayout):
         if count > 4:
             self.popups[0].dismiss()
             self.popups.remove(self.popups[0])
+
+    def check_data_to_auto_start(self):
+        if self.item_data_template['carrier_data']:
+            if int(self.item_data_template['carrier_data']['msl_time']) > 0 and int(self.item_data_template['carrier_data']['quantity']) > 0:
+                self.item_data_template['auto_add_task'] = True
+
+    def auto_start_task(self):
+
+        if self.item_data_template['auto_add_task']:
+            dt_format = "%Y-%m-%d %H:%M:%S.%f"
+            date_time = datetime.datetime
+            time_now = (date_time.now()).timestamp()
+            pauses = float(self.item_data_template['carrier_data']['pauses_total_time']) * 86400
+            msl_time = float(self.item_data_template['carrier_data']['msl_time']) * 86400
+            high_msl_over_time = 72*60*60
+            hours_less_greater = 'hours_less_then_72'
+
+            time_first_load = float(date_time.strptime(self.item_data_template['carrier_data']['time_first_load'], dt_format).timestamp())
+            self.item_data_template['msl'] = MSL_EXPIRE[int(self.item_data_template['carrier_data']['msl_time'])]
+            if 500 > int(self.item_data_template['carrier_data']['part_height']):
+                self.item_data_template['part_thickness'] = '< 0.5'
+            elif 500 <= int(self.item_data_template['carrier_data']['part_height']) < 800:
+                self.item_data_template['part_thickness'] = '0.8 => 0.5mm'
+            elif 800 <= int(self.item_data_template['carrier_data']['part_height']) < 1400:
+                self.item_data_template['part_thickness'] = '1.4 => 0.8mm'
+            elif 1400 <= int(self.item_data_template['carrier_data']['part_height']) < 2000:
+                self.item_data_template['part_thickness'] = '2 => 1.4mm'
+            elif 2000 <= int(self.item_data_template['carrier_data']['part_height']) < 4500:
+                self.item_data_template['part_thickness'] = '4.5 => 2mm'
+
+            if time_now - time_first_load - pauses - msl_time > high_msl_over_time:
+                self.item_data_template['hours_greater_than_72'] = True
+                self.item_data_template['hours_less_72_hours'] = False
+                hours_less_greater = 'hours greater than 72'
+            else:
+                self.item_data_template['hours_greater_than_72'] = False
+                self.item_data_template['hours_less_72_hours'] = True
+                hours_less_greater = 'hours less 72 hours'
+
+            msl_interval = SetDryingIntervalController()
+            self.item_data_template['drying_start_interval'] = msl_interval.main(
+                self.item_data_template['part_thickness'],
+                self.item_data_template['msl'],
+                hours_less_greater)
+
+            start_drying = StartDryingController()
+            self.last_action_info = 'Carrier '+self.item_data_template['carrier_barcode']+' is added to dryer'
+            self.set_last_action_info()
+            start_drying.main(self.item_data_template)
+
+
+
+
+

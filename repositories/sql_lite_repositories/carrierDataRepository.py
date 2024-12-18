@@ -24,4 +24,13 @@ class CarrierDataRepository:
         data_val = data.scalars().first()
         if not data_val:
             return {'id': None, 'carrier_id': barcode, 'part_name': None}
-        return {'id': data_val.id, 'carrier_id': data_val.carrier_id, 'part_name': data_val.part_name}
+        return {
+            'id': data_val.id,
+            'carrier_id': data_val.carrier_id,
+            'part_name': data_val.part_name,
+            'quantity': data_val.quantity,
+            'time_first_load': data_val.time_first_load,
+            'msl_time': data_val.msl_time,
+            'pauses_total_time': data_val.pauses_total_time,
+            'part_height': data_val.part_height
+        }
