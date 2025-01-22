@@ -25,7 +25,6 @@ class AddCarrierService:
             elif (self.barcode[0]).lower() in BARCODE_SETTINGS['allowed_first_chars_position_in_dryer'] and len(self.barcode) == BARCODE_SETTINGS['allowed_count_of_chars_position']:
                 self.add_carrier['carrier_position'] = self.barcode
                 self.add_carrier['status_message'] = f'Dryer position {self.barcode} is set.'
-            # elif (self.barcode[0]).lower() in BARCODE_SETTINGS['allowed_first_chars_drying_items'] and len(self.barcode) == BARCODE_SETTINGS['allowed_count_of_chars_items']:
             elif bool(re.match(self.item_barcode_regex_pattern, self.barcode)):
                 self.add_carrier['carrier_barcode'] = self.barcode
                 carrier_exist = carrier_repo.check_carrier_exist(self.barcode)

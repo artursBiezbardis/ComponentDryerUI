@@ -9,7 +9,7 @@ from view.layouts.keyboardPopup import KeyboardPopup
 from view.layouts.allItemsList import AllItemsList
 import controllers.carrier_controllers.addRemoveCarrierController as addCarrier
 import controllers.carrier_controllers.createDryingItemController as createItem
-from constants import ITEM_DATA_TEMPLATE
+from constants import ITEM_DATA_TEMPLATE, MSL_EXPIRE
 from controllers.drying_list_controllers.updateDryingListController import UpdateCarrierListFromDBController
 from kivy.properties import ObjectProperty
 from controllers.dryer_communications_controllers.xtremeDryerCommunicationsController import XtremeDryerCommunicationsController
@@ -21,6 +21,9 @@ from controllers.timer_update_controllers.deviceOffIntervalController import Dev
 from controllers.timer_update_controllers.timerUpdateController import TimerUpdateController
 from controllers.dryer_alarm_controllers.dryerAlarmController import DryerAlarmController
 from collections import Counter
+from services.carrier_services.autoStartDryingService import AutoStartDryingService
+from database_upgrades_updates.update_carrier_table import UpdateCarrierTable
+from services.tpsys_services.getTpsysDataService import GetTpsysDataService
 
 
 class MainLayout(GridLayout):
@@ -30,6 +33,7 @@ class MainLayout(GridLayout):
 
     ADD_REMOVE_CARRIER = {'carrier_barcode': '',
                           'carrier_position': '',
+                          'task_id': None,
                           'add_status': False,
                           'remove_status': False,
                           'status_message': '',
@@ -86,6 +90,8 @@ class MainLayout(GridLayout):
         self.item_data_template = createItem.CreateDryingItemController(self.add_remove_carrier, self.item_data_template).main()
         self.last_action_info = self.add_remove_carrier['status_message']
         self.set_last_action_info()
+        self.check_data_to_auto_start()
+        self.auto_start_task()
         self.set_custom_part_popup()
         self.open_set_timer_form_popup()
         self.show_info_popup(self.add_remove_carrier)
@@ -99,7 +105,7 @@ class MainLayout(GridLayout):
         scanner_input.focus = True
 
     def open_set_timer_form_popup(self):
-        if self.item_data_template['part_name'] and not self.item_data_template['popup_opened']:
+        if self.item_data_template['part_name'] and not self.item_data_template['popup_opened'] and not self.item_data_template['auto_add_task']:
             self.popup = AddToDryerForm(item_data_template=self.item_data_template, main_layout=self, auto_dismiss=False)
             self.popups.append(self.popup)
             self.popup.main_layout = self
@@ -177,7 +183,6 @@ class MainLayout(GridLayout):
             self.info_popup.open()
 
     def check_and_update_dryer_status(self, dt):
-
         LastAppActivityRegisterController().main()
         self.dryer_status_output = XtremeDryerCommunicationsController().main()
         self.dryer_status: bool = self.dryer_status_output['dryer_status']
@@ -185,7 +190,6 @@ class MainLayout(GridLayout):
         self.set_status_color(self.dryer_status)
         self.set_dryer_status_info(self.dryer_status_output['dryer_status_info'])
         self.clean_popup_list()
-
 
     def set_status_color(self, dryer_status):
         if dryer_status:
@@ -271,3 +275,23 @@ class MainLayout(GridLayout):
         if count > 4:
             self.popups[0].dismiss()
             self.popups.remove(self.popups[0])
+
+    def check_data_to_auto_start(self):
+        if self.item_data_template['carrier_data'] and self.item_data_template['carrier_data']['id']:
+            if int(self.item_data_template['carrier_data']['msl_time']) > 0 and int(self.item_data_template['carrier_data']['quantity']) > 0:
+                self.item_data_template['auto_add_task'] = True
+
+    def auto_start_task(self):
+
+        if self.item_data_template['auto_add_task']:
+            AutoStartDryingService(self).main()
+
+    def update_carrier_table(self):
+        GetTpsysDataService().get_data()
+        UpdateCarrierTable().update_carrier_database()
+
+
+
+
+
+

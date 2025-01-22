@@ -17,6 +17,11 @@ class CarrierData(Base):
     id = Column(Integer, primary_key=True, unique=True)
     carrier_id = Column(String, unique=True)
     part_name = Column(String)
+    quantity = Column(Integer)
+    time_first_load = Column(String)
+    msl_time = Column(Integer)
+    pauses_total_time = Column(Float)
+    part_height = Column(Integer)
 
 
 class TaskData(Base):

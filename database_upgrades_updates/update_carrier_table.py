@@ -1,20 +1,37 @@
 import utilities.CSVAndTSVUtilities as tsv
-from models.models import CarrierData, Session
+from sqlalchemy import delete
+from database import AsyncSessionLocal, AsyncSession, engine
+from models.models import CarrierData
+import asyncio
 
 
-def update_carrier_table(carrier_table_path):
+class UpdateCarrierTable:
 
-    tsv_data = tsv.CSVReader().read_tsv(carrier_table_path)
-    session = Session()
-    del tsv_data[0]
-    for row in tsv_data:
-        if row:
-            new_data = CarrierData(
-                carrier_id=row[0],
-                part_name=row[1],
-            )
-            session.add(new_data)
-    session.commit()
+    def update_carrier_database(self):
 
 
-update_carrier_table('../data/tabula.tsv')
+        asyncio.run(self.add_carrier_table_data('data\carrier_data.tsv'))
+
+    async def add_carrier_table_data(self, carrier_table_path: str) -> None:
+        """Updates the carrier table with data from the given TSV file."""
+        async with AsyncSession(engine) as session:
+            async with session.begin():
+                await session.execute(delete(CarrierData))
+        async with AsyncSessionLocal() as db_session:
+            tsv_data = tsv.CSVReader().read_tsv(carrier_table_path)
+            header, *data_rows = tsv_data
+
+            for row in data_rows:
+                if row:
+                    new_data = CarrierData(
+                        carrier_id=str(row[0]),
+                        part_name=row[1],
+                        quantity=int(row[2]),
+                        time_first_load=str(row[3]),
+                        msl_time=int(row[4]),
+                        pauses_total_time=float(row[5]),
+                        part_height=int(float(row[6])*1000)
+                    )
+                    db_session.add(new_data)
+            await db_session.commit()
+
