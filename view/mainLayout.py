@@ -22,9 +22,8 @@ from controllers.timer_update_controllers.timerUpdateController import TimerUpda
 from controllers.dryer_alarm_controllers.dryerAlarmController import DryerAlarmController
 from collections import Counter
 from services.carrier_services.autoStartDryingService import AutoStartDryingService
-import datetime
-from controllers.carrier_controllers.setDryingIntervalController import SetDryingIntervalController
-from controllers.carrier_controllers.startDryingController import StartDryingController
+from database_upgrades_updates.update_carrier_table import UpdateCarrierTable
+from services.tpsys_services.getTpsysDataService import GetTpsysDataService
 
 
 class MainLayout(GridLayout):
@@ -34,6 +33,7 @@ class MainLayout(GridLayout):
 
     ADD_REMOVE_CARRIER = {'carrier_barcode': '',
                           'carrier_position': '',
+                          'task_id': None,
                           'add_status': False,
                           'remove_status': False,
                           'status_message': '',
@@ -183,7 +183,6 @@ class MainLayout(GridLayout):
             self.info_popup.open()
 
     def check_and_update_dryer_status(self, dt):
-
         LastAppActivityRegisterController().main()
         self.dryer_status_output = XtremeDryerCommunicationsController().main()
         self.dryer_status: bool = self.dryer_status_output['dryer_status']
@@ -191,7 +190,6 @@ class MainLayout(GridLayout):
         self.set_status_color(self.dryer_status)
         self.set_dryer_status_info(self.dryer_status_output['dryer_status_info'])
         self.clean_popup_list()
-
 
     def set_status_color(self, dryer_status):
         if dryer_status:
@@ -287,6 +285,10 @@ class MainLayout(GridLayout):
 
         if self.item_data_template['auto_add_task']:
             AutoStartDryingService(self).main()
+
+    def update_carrier_table(self):
+        GetTpsysDataService().get_data()
+        UpdateCarrierTable().update_carrier_database()
 
 
 

@@ -17,3 +17,4 @@ class FormatStringUtilities:
             formatted_text += current_line
 
         return formatted_text
+

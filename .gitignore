@@ -36,6 +36,7 @@ staticfiles/
 *.cfg
 *.conf
 .env
+remote_config/.env
 
 # macOS files
 .DS_Store
@@ -50,7 +51,7 @@ Thumbs.db
 .komodotools/
 *.komodotools
 .kate-swp/
-/scripts/
+scripts/db_async_init.py
 /alembic/
 
 bin/*
